@@ -62,7 +62,11 @@ class TTRPGVoiceLab(ctk.CTk):
         # Paths - handle both development and PyInstaller frozen app
         if getattr(sys, 'frozen', False):
             # Running as compiled executable
-            self.base_dir = Path(sys.executable).parent
+            # PyInstaller creates a temp folder and stores path in _MEIPASS
+            if hasattr(sys, '_MEIPASS'):
+                self.base_dir = Path(sys._MEIPASS)
+            else:
+                self.base_dir = Path(sys.executable).parent
         else:
             # Running as script
             self.base_dir = Path(__file__).parent.parent
