@@ -9,6 +9,11 @@ import os
 
 block_cipher = None
 
+# Include piper.exe as a binary
+binaries = []
+if os.path.exists('piper.exe'):
+    binaries.append(('piper.exe', '.'))
+
 # Collect necessary data files
 datas = [
     ('presets', 'presets'),
@@ -33,7 +38,7 @@ datas += collect_data_files('pedalboard')
 a = Analysis(
     ['src/ttrpg_voice_lab.py'],
     pathex=[],
-    binaries=[],
+    binaries=binaries,
     datas=datas,
     hiddenimports=hiddenimports,
     hookspath=[],

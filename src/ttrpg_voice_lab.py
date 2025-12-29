@@ -358,8 +358,19 @@ class TTRPGVoiceLab(ctk.CTk):
             # Use piper-tts command line
             import subprocess
 
+            # Find piper executable
+            if getattr(sys, 'frozen', False):
+                # Running as frozen executable - piper.exe should be next to the EXE
+                piper_exe = Path(sys.executable).parent / 'piper.exe'
+            else:
+                # Running as script - try to find piper in PATH or project root
+                piper_exe = 'piper'
+                project_piper = Path(__file__).parent.parent / 'piper.exe'
+                if project_piper.exists():
+                    piper_exe = str(project_piper)
+
             cmd = [
-                'piper',
+                str(piper_exe),
                 '--model', model_path,
                 '--output_file', temp_output.name
             ]
