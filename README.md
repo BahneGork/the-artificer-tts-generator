@@ -12,8 +12,9 @@ The Artificer is a desktop application designed for TTRPG content creators to ge
 
 ### Key Features
 
-- **🎭 Voice Presets**: Pre-configured profiles for Warforged, Dragons, Ghosts, Demons, and more
-- **🎚️ Real-time Effects**: Pitch shifting, mechanical modulation, reverb, and distortion
+- **🎭 Voice Presets**: Pre-configured profiles for Clockwork, Dragons, Ghosts, Demons, and more
+- **🌍 Multi-Language**: Supports **Danish, German, Spanish, French, Japanese, and 30+ languages**! [See Guide](docs/MULTILANGUAGE_GUIDE.md)
+- **🎚️ 10 Audio Controls**: Speech rate, pitch, distortion, filters, chorus, delay, and more
 - **🔊 Preview System**: Instant playback to test your settings
 - **💾 High-Quality Export**: Crystal-clear WAV files ready for video editing
 - **🖥️ Offline Processing**: Runs completely locally with no internet required
@@ -58,19 +59,36 @@ python src/ttrpg_voice_lab.py
 
 ### Included Presets
 
-1. **Warforged** - Mechanical construct with metallic resonance
-2. **Ancient Dragon** - Deep, resonant voice with cavernous reverb
-3. **Ghostly Apparition** - Ethereal, otherworldly with chorus and heavy reverb
+1. **Clockwork** - Mechanical construct with metallic resonance
+2. **Ancient Dragon** - Deep, slow voice with cavernous reverb and delay
+3. **Ghostly Apparition** - Ethereal, otherworldly with heavy chorus and reverb
 4. **Demon Lord** - Dark, distorted voice with heavy processing
-5. **Goblin** - High-pitched, nasally creature voice
+5. **Goblin** - Fast, high-pitched, nasally creature voice
+6. **Orc Warrior** - Gruff, aggressive voice with distortion
+7. **Lich** - Ancient undead with hollow echo and chorus
+8. **Fey Creature** - Magical, whimsical voice with shimmer
+9. **Giant** - Enormous, very slow booming voice with low-pass filter
+10. **Elemental (Fire)** - Crackling, intense voice with distortion
+11. **Vampire** - Seductive, menacing voice with slight echo
+12. **Construct Guardian** - Heavy mechanical voice with deep tone
 
-### Customization
+### Full Audio Control (10 Sliders)
 
-Each preset can be customized with three dynamic sliders:
-
+**Row 1:**
+- **Speech Rate**: 0.5x to 2.0x (speed of talking)
 - **Pitch Shift**: -12 to +12 semitones
+- **Distortion**: 0 to 20 dB (grit and aggression)
 - **Mechanical Frequency**: 0 to 200 Hz (ring modulator)
+- **Volume Boost**: 0 to +12 dB
+
+**Row 2:**
 - **Echo Level**: 0% to 100% (reverb wetness)
+- **Chorus Depth**: 0% to 100% (ethereal effect)
+- **Delay Time**: 0 to 500ms (distinct echo)
+- **Low-pass Filter**: 1000 to 8000 Hz (muffled/distant)
+- **High-pass Filter**: 50 to 500 Hz (tinny/radio effect)
+
+Every preset has unique combinations that make characters truly distinctive!
 
 ## Project Structure
 
