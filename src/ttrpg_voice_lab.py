@@ -169,9 +169,32 @@ class TTRPGVoiceLab(ctk.CTk):
         )
         self.preset_label.grid(row=1, column=0, padx=20, pady=(0, 10))
 
+        # Voice/Language selector frame
+        self.voice_frame = ctk.CTkFrame(self.main_frame)
+        self.voice_frame.grid(row=2, column=0, padx=20, pady=(0, 10), sticky="ew")
+        self.voice_frame.grid_columnconfigure(1, weight=1)
+
+        ctk.CTkLabel(
+            self.voice_frame,
+            text="Voice Model:",
+            font=ctk.CTkFont(size=12, weight="bold")
+        ).grid(row=0, column=0, padx=10, pady=10, sticky="w")
+
+        self.voice_selector = ctk.CTkComboBox(
+            self.voice_frame,
+            values=["No models found"],
+            command=self.on_voice_selected,
+            state="readonly"
+        )
+        self.voice_selector.grid(row=0, column=1, padx=10, pady=10, sticky="ew")
+
+        # Populate voice models
+        self.voice_models = {}  # Dictionary: display_name -> model_path
+        self.load_voice_models()
+
         # Text input area
         self.text_frame = ctk.CTkFrame(self.main_frame)
-        self.text_frame.grid(row=2, column=0, padx=20, pady=10, sticky="nsew")
+        self.text_frame.grid(row=3, column=0, padx=20, pady=10, sticky="nsew")
         self.text_frame.grid_columnconfigure(0, weight=1)
         self.text_frame.grid_rowconfigure(1, weight=1)
 
@@ -191,7 +214,7 @@ class TTRPGVoiceLab(ctk.CTk):
 
         # Effect controls frame - Row 1
         self.controls_frame = ctk.CTkFrame(self.main_frame)
-        self.controls_frame.grid(row=3, column=0, padx=20, pady=10, sticky="ew")
+        self.controls_frame.grid(row=4, column=0, padx=20, pady=10, sticky="ew")
         self.controls_frame.grid_columnconfigure((0, 1, 2, 3, 4), weight=1)
 
         # Speech Rate slider
@@ -311,7 +334,7 @@ class TTRPGVoiceLab(ctk.CTk):
 
         # Effect controls frame - Row 2
         self.controls_frame2 = ctk.CTkFrame(self.main_frame)
-        self.controls_frame2.grid(row=4, column=0, padx=20, pady=(0, 10), sticky="ew")
+        self.controls_frame2.grid(row=5, column=0, padx=20, pady=(0, 10), sticky="ew")
         self.controls_frame2.grid_columnconfigure((0, 1, 2, 3, 4), weight=1)
 
         # Echo/Reverb level slider
@@ -431,7 +454,7 @@ class TTRPGVoiceLab(ctk.CTk):
 
         # Action buttons
         self.button_frame = ctk.CTkFrame(self.main_frame)
-        self.button_frame.grid(row=5, column=0, padx=20, pady=20, sticky="ew")
+        self.button_frame.grid(row=6, column=0, padx=20, pady=20, sticky="ew")
         self.button_frame.grid_columnconfigure((0, 1), weight=1)
 
         self.preview_button = ctk.CTkButton(
@@ -460,7 +483,7 @@ class TTRPGVoiceLab(ctk.CTk):
             text="Ready",
             font=ctk.CTkFont(size=12)
         )
-        self.status_label.grid(row=6, column=0, padx=20, pady=(0, 10))
+        self.status_label.grid(row=7, column=0, padx=20, pady=(0, 10))
 
     def update_speech_rate_label(self, value):
         """Update speech rate slider label"""
@@ -507,6 +530,53 @@ class TTRPGVoiceLab(ctk.CTk):
         """Update high-pass slider label"""
         val = int(float(value))
         self.highpass_value_label.configure(text=f"{val}Hz" if val > 60 else "Off")
+
+    def load_voice_models(self):
+        """Scan models directory and populate voice selector"""
+        if not self.models_dir.exists():
+            return
+
+        onnx_files = list(self.models_dir.glob("*.onnx"))
+        if not onnx_files:
+            return
+
+        self.voice_models = {}
+        for onnx_file in onnx_files:
+            json_file = onnx_file.with_suffix('.onnx.json')
+
+            # Try to parse the JSON file for voice info
+            display_name = onnx_file.stem
+            if json_file.exists():
+                try:
+                    with open(json_file, 'r', encoding='utf-8') as f:
+                        voice_info = json.load(f)
+                        # Extract language and voice name
+                        language = voice_info.get('language', {}).get('name_english', 'Unknown')
+                        voice_name = voice_info.get('name', onnx_file.stem)
+                        quality = voice_info.get('quality', '')
+
+                        # Format: "English (US) - lessac (medium)"
+                        if quality:
+                            display_name = f"{language} - {voice_name} ({quality})"
+                        else:
+                            display_name = f"{language} - {voice_name}"
+                except:
+                    # If JSON parsing fails, use filename
+                    display_name = onnx_file.stem
+
+            self.voice_models[display_name] = str(onnx_file)
+
+        # Update dropdown
+        if self.voice_models:
+            voice_names = list(self.voice_models.keys())
+            self.voice_selector.configure(values=voice_names)
+            self.voice_selector.set(voice_names[0])  # Select first voice
+            self.status_label.configure(text=f"Loaded {len(voice_names)} voice model(s)")
+
+    def on_voice_selected(self, choice):
+        """Handle voice model selection"""
+        if choice in self.voice_models:
+            self.status_label.configure(text=f"Selected: {choice}")
 
     def load_preset(self, preset: Dict[str, Any]):
         """Load a voice preset and update UI"""
@@ -566,13 +636,13 @@ class TTRPGVoiceLab(ctk.CTk):
         Returns path to generated audio file or None on failure.
         """
         try:
-            # Find Piper model
-            onnx_files = list(self.models_dir.glob("*.onnx"))
-            if not onnx_files:
-                messagebox.showerror("Error", "No Piper voice model found in models folder.")
+            # Get selected voice model from dropdown
+            selected_voice = self.voice_selector.get()
+            if selected_voice not in self.voice_models:
+                messagebox.showerror("Error", "No voice model selected.")
                 return None
 
-            model_path = str(onnx_files[0])
+            model_path = self.voice_models[selected_voice]
 
             # Create temporary output file in a writable location
             # Use the exports directory which we know is writable
