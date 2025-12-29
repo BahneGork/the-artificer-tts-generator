@@ -14,9 +14,9 @@ from typing import Optional, Dict, Any
 
 import customtkinter as ctk
 from tkinter import filedialog, messagebox
-import pygame.mixer
 import numpy as np
 from pydub import AudioSegment
+from pydub.playback import play
 from pedalboard import (
     Pedalboard,
     Reverb,
@@ -25,6 +25,14 @@ from pedalboard import (
     LowpassFilter,
     PitchShift
 )
+
+# Try to import pygame for audio playback (optional)
+try:
+    import pygame.mixer
+    PYGAME_AVAILABLE = True
+except ImportError:
+    PYGAME_AVAILABLE = False
+    print("Warning: pygame not available. Preview will use pydub playback instead.")
 
 # Set appearance mode and color theme
 ctk.set_appearance_mode("dark")
@@ -41,8 +49,9 @@ class TTRPGVoiceLab(ctk.CTk):
         self.title("The Artificer - TTS Voice Generator")
         self.geometry("1000x700")
 
-        # Initialize pygame mixer for audio playback
-        pygame.mixer.init(frequency=22050, size=-16, channels=1)
+        # Initialize pygame mixer for audio playback (if available)
+        if PYGAME_AVAILABLE:
+            pygame.mixer.init(frequency=22050, size=-16, channels=1)
 
         # Application state
         self.current_preset: Optional[Dict[str, Any]] = None
@@ -471,9 +480,14 @@ class TTRPGVoiceLab(ctk.CTk):
 
             self.status_label.configure(text="Playing preview...")
 
-            # Play audio
-            pygame.mixer.music.load(temp_preview.name)
-            pygame.mixer.music.play()
+            # Play audio using pygame or pydub
+            if PYGAME_AVAILABLE:
+                pygame.mixer.music.load(temp_preview.name)
+                pygame.mixer.music.play()
+            else:
+                # Use pydub playback as fallback
+                preview_audio = AudioSegment.from_wav(temp_preview.name)
+                play(preview_audio)
 
             self.status_label.configure(text="Preview complete - Ready")
 
@@ -566,7 +580,8 @@ class TTRPGVoiceLab(ctk.CTk):
 
     def on_closing(self):
         """Handle application close"""
-        pygame.mixer.quit()
+        if PYGAME_AVAILABLE:
+            pygame.mixer.quit()
         self.cleanup_temp_files()
         self.destroy()
 
