@@ -16,7 +16,6 @@ import customtkinter as ctk
 from tkinter import filedialog, messagebox
 import numpy as np
 from pydub import AudioSegment
-from pydub.playback import play
 from pedalboard import (
     Pedalboard,
     Reverb,
@@ -530,14 +529,19 @@ class TTRPGVoiceLab(ctk.CTk):
 
             self.status_label.configure(text="Playing preview...")
 
-            # Play audio using pygame or pydub
+            # Play audio using pygame or system default player
             if PYGAME_AVAILABLE:
                 pygame.mixer.music.load(str(temp_preview_path))
                 pygame.mixer.music.play()
             else:
-                # Use pydub playback as fallback
-                preview_audio = AudioSegment.from_wav(str(temp_preview_path))
-                play(preview_audio)
+                # Use system default WAV player (avoids pydub temp file issues)
+                import platform
+                if platform.system() == 'Windows':
+                    os.startfile(str(temp_preview_path))
+                else:
+                    # Linux/Mac - try xdg-open or open
+                    import subprocess
+                    subprocess.run(['xdg-open', str(temp_preview_path)], check=False)
 
             self.status_label.configure(text="Preview complete - Ready")
 
