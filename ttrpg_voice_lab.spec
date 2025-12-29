@@ -9,10 +9,19 @@ import os
 
 block_cipher = None
 
-# Include piper.exe as a binary
+# Include piper.exe and its DLL dependencies as binaries
 binaries = []
-if os.path.exists('piper.exe'):
-    binaries.append(('piper.exe', '.'))
+piper_files = ['piper.exe', 'espeak-ng.dll', 'piper_phonemize.dll']
+for piper_file in piper_files:
+    if os.path.exists(piper_file):
+        binaries.append((piper_file, '.'))
+
+# Also include any other DLL files that might be in the project root
+import glob
+for dll in glob.glob('*.dll'):
+    dll_name = os.path.basename(dll)
+    if dll_name not in [b[0] for b in binaries]:  # Avoid duplicates
+        binaries.append((dll, '.'))
 
 # Collect necessary data files
 datas = [
