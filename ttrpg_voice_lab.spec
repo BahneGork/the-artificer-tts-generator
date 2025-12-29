@@ -24,7 +24,7 @@ hiddenimports = [
     'pygame',
     'numpy',
     'customtkinter',
-    'pyaudioop',  # Required for Python 3.13+
+    'audioop_lts',  # Required for Python 3.13+
 ]
 
 # Add pedalboard data files
