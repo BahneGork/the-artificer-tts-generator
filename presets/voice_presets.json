@@ -1,0 +1,61 @@
+{
+  "presets": [
+    {
+      "name": "Warforged",
+      "description": "Mechanical construct voice with metallic resonance",
+      "effects": {
+        "ring_modulator_freq": 50,
+        "distortion_drive": 10,
+        "pitch_shift": 0,
+        "reverb_room_size": 0.3,
+        "reverb_wetness": 0.2
+      }
+    },
+    {
+      "name": "Ancient Dragon",
+      "description": "Deep, resonant voice with cavernous reverb",
+      "effects": {
+        "ring_modulator_freq": 0,
+        "distortion_drive": 0,
+        "pitch_shift": -4,
+        "reverb_room_size": 0.8,
+        "reverb_wetness": 0.5
+      }
+    },
+    {
+      "name": "Ghostly Apparition",
+      "description": "Ethereal, otherworldly voice with chorus and heavy reverb",
+      "effects": {
+        "ring_modulator_freq": 0,
+        "distortion_drive": 0,
+        "pitch_shift": 2,
+        "reverb_room_size": 0.9,
+        "reverb_wetness": 1.0,
+        "chorus_enabled": true,
+        "lowpass_cutoff": 3000
+      }
+    },
+    {
+      "name": "Demon Lord",
+      "description": "Dark, distorted voice with heavy processing",
+      "effects": {
+        "ring_modulator_freq": 30,
+        "distortion_drive": 15,
+        "pitch_shift": -6,
+        "reverb_room_size": 0.6,
+        "reverb_wetness": 0.4
+      }
+    },
+    {
+      "name": "Goblin",
+      "description": "High-pitched, nasally creature voice",
+      "effects": {
+        "ring_modulator_freq": 0,
+        "distortion_drive": 5,
+        "pitch_shift": 5,
+        "reverb_room_size": 0.2,
+        "reverb_wetness": 0.1
+      }
+    }
+  ]
+}

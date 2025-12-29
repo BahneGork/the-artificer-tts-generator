@@ -1,0 +1,41 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+venv/
+env/
+
+# Build outputs
+build/
+dist/
+*.egg-info/
+
+# Audio files (may be large)
+audio/*.wav
+audio/*.mp3
+audio/*.ogg
+!audio/.gitkeep
+
+# Configuration secrets
+config/secrets.*
+config/*.key
+*.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Testing
+.coverage
+htmlcov/
+.pytest_cache/

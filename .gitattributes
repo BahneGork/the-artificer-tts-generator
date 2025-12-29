@@ -1,0 +1,31 @@
+# Git attributes for cross-platform development
+
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Python files
+*.py text eol=lf
+*.pyw text eol=lf
+
+# Shell scripts
+*.sh text eol=lf
+
+# Windows batch files
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# JSON files
+*.json text eol=lf
+
+# Markdown files
+*.md text eol=lf
+
+# Binary files
+*.wav binary
+*.onnx binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+
+# Ensure spec files use LF
+*.spec text eol=lf
