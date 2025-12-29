@@ -84,6 +84,11 @@ class TTRPGVoiceLab(ctk.CTk):
         # Create exports directory if it doesn't exist
         self.exports_dir.mkdir(exist_ok=True)
 
+        # Debug: Show where exports dir is
+        print(f"DEBUG: Exports directory: {self.exports_dir}")
+        print(f"DEBUG: Frozen: {getattr(sys, 'frozen', False)}")
+        print(f"DEBUG: Executable: {sys.executable if hasattr(sys, 'executable') else 'N/A'}")
+
         # Load presets
         self.load_presets()
 
