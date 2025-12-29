@@ -22,31 +22,35 @@ The Artificer is a desktop application designed for TTRPG content creators to ge
 
 ## Quick Start
 
-### Prerequisites
+### Windows (Recommended)
 
-- Python 3.8 or higher
-- Windows 10/11 or Linux (WSL supported)
-- ~500MB free space for voice models
-
-### Installation
-
-```bash
-# Clone the repository
-git clone <repository-url>
+```powershell
+# 1. Clone the repository
+git clone https://github.com/BahneGork/the-artificer-tts-generator.git
 cd the-artificer-tts-generator
 
+# 2. Install Python packages
+pip install -r requirements.txt
+
+# 3. Download voice model (automatic)
+python setup_voice_model.py
+
+# 4. Run the app
+python src\ttrpg_voice_lab.py
+```
+
+**See [SIMPLE_BUILD_GUIDE.md](SIMPLE_BUILD_GUIDE.md) for building the installer.**
+
+### Linux/WSL
+
+```bash
 # Install dependencies
 pip install -r requirements.txt
 
-# Download a voice model (interactive script)
+# Download voice model
 ./download_models.sh
 
 # Run the application
-./run.sh
-```
-
-Or manually:
-```bash
 python src/ttrpg_voice_lab.py
 ```
 
@@ -114,34 +118,36 @@ the-artificer-tts-generator/
 - **TTRPG Prep**: Pre-record important NPC dialogue
 - **Content Creation**: Add professional voice-overs to TTRPG content
 
-## Building for Distribution
+## Building the Installer
 
-### Windows Installer (Recommended)
+### Simple 3-Step Process
 
-Build a professional installer with Start Menu shortcuts and proper uninstaller:
+1. **Install Prerequisites** (first time only)
+   - Python 3.10+ from https://www.python.org/downloads/
+   - Inno Setup from https://jrsoftware.org/isdl.php
 
-```powershell
-# One command to build everything
-.\build-installer.bat
-```
+2. **Setup** (first time only)
+   ```powershell
+   pip install -r requirements.txt
+   python setup_voice_model.py
+   ```
+
+3. **Build**
+   ```powershell
+   .\build-installer.bat
+   ```
 
 **Output**: `installer_output/TheArtificer-TTS-Setup-1.0.0.exe`
 
-**Prerequisites**:
-- Install [Inno Setup](https://jrsoftware.org/isdl.php)
-- See [docs/INSTALLER_BUILD.md](docs/INSTALLER_BUILD.md) for details
+**See [SIMPLE_BUILD_GUIDE.md](SIMPLE_BUILD_GUIDE.md) for complete instructions.**
 
-### Portable EXE (Alternative)
-
-Build a portable executable that doesn't require installation:
+### Alternative: Portable EXE (No Installer)
 
 ```powershell
 .\build.bat
 ```
 
 **Output**: `dist/TTRPGVoiceLab/TTRPGVoiceLab.exe`
-
-See [docs/SETUP.md](docs/SETUP.md) for detailed build instructions.
 
 ## Documentation
 
