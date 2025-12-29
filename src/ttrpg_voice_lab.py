@@ -190,7 +190,7 @@ class TTRPGVoiceLab(ctk.CTk):
         # Effect controls frame
         self.controls_frame = ctk.CTkFrame(self.main_frame)
         self.controls_frame.grid(row=3, column=0, padx=20, pady=10, sticky="ew")
-        self.controls_frame.grid_columnconfigure((0, 1, 2), weight=1)
+        self.controls_frame.grid_columnconfigure((0, 1, 2, 3), weight=1)
 
         # Pitch shift slider
         ctk.CTkLabel(
@@ -261,6 +261,29 @@ class TTRPGVoiceLab(ctk.CTk):
         )
         self.echo_value_label.grid(row=2, column=2, padx=10, pady=(0, 10))
 
+        # Volume boost slider
+        ctk.CTkLabel(
+            self.controls_frame,
+            text="Volume Boost (dB):",
+            font=ctk.CTkFont(size=12)
+        ).grid(row=0, column=3, padx=10, pady=(10, 5), sticky="w")
+
+        self.volume_slider = ctk.CTkSlider(
+            self.controls_frame,
+            from_=0,
+            to=12,
+            number_of_steps=24,
+            command=self.update_volume_label
+        )
+        self.volume_slider.grid(row=1, column=3, padx=10, pady=(0, 10), sticky="ew")
+        self.volume_slider.set(3)
+
+        self.volume_value_label = ctk.CTkLabel(
+            self.controls_frame,
+            text="+3 dB"
+        )
+        self.volume_value_label.grid(row=2, column=3, padx=10, pady=(0, 10))
+
         # Action buttons
         self.button_frame = ctk.CTkFrame(self.main_frame)
         self.button_frame.grid(row=4, column=0, padx=20, pady=20, sticky="ew")
@@ -306,6 +329,10 @@ class TTRPGVoiceLab(ctk.CTk):
         """Update echo slider label"""
         self.echo_value_label.configure(text=f"{int(float(value) * 100)}%")
 
+    def update_volume_label(self, value):
+        """Update volume slider label"""
+        self.volume_value_label.configure(text=f"+{int(float(value))} dB")
+
     def load_preset(self, preset: Dict[str, Any]):
         """Load a voice preset and update UI"""
         self.current_preset = preset
@@ -316,11 +343,13 @@ class TTRPGVoiceLab(ctk.CTk):
         self.pitch_slider.set(effects.get('pitch_shift', 0))
         self.mech_freq_slider.set(effects.get('ring_modulator_freq', 0))
         self.echo_slider.set(effects.get('reverb_wetness', 0.3))
+        self.volume_slider.set(effects.get('volume_boost', 3))
 
         # Update labels
         self.update_pitch_label(effects.get('pitch_shift', 0))
         self.update_mech_label(effects.get('ring_modulator_freq', 0))
         self.update_echo_label(effects.get('reverb_wetness', 0.3))
+        self.update_volume_label(effects.get('volume_boost', 3))
 
         self.status_label.configure(text=f"Loaded preset: {preset['name']}")
 
@@ -432,6 +461,7 @@ class TTRPGVoiceLab(ctk.CTk):
             pitch_shift = self.pitch_slider.get()
             mech_freq = self.mech_freq_slider.get()
             reverb_wetness = self.echo_slider.get()
+            volume_boost = self.volume_slider.get()
 
             # Build effects chain
             board = Pedalboard()
@@ -478,6 +508,12 @@ class TTRPGVoiceLab(ctk.CTk):
 
             # Process audio
             processed = board(samples, audio.frame_rate)
+
+            # Apply volume boost
+            if volume_boost > 0:
+                # Convert dB to linear gain
+                gain = 10 ** (volume_boost / 20)
+                processed = processed * gain
 
             # Convert back to AudioSegment
             processed = np.clip(processed * (2**15), -32768, 32767).astype(np.int16)

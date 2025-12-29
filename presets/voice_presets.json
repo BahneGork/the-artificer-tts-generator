@@ -8,7 +8,8 @@
         "distortion_drive": 10,
         "pitch_shift": 0,
         "reverb_room_size": 0.3,
-        "reverb_wetness": 0.2
+        "reverb_wetness": 0.2,
+        "volume_boost": 3
       }
     },
     {
@@ -19,7 +20,8 @@
         "distortion_drive": 0,
         "pitch_shift": -4,
         "reverb_room_size": 0.8,
-        "reverb_wetness": 0.5
+        "reverb_wetness": 0.5,
+        "volume_boost": 6
       }
     },
     {
@@ -32,7 +34,8 @@
         "reverb_room_size": 0.9,
         "reverb_wetness": 1.0,
         "chorus_enabled": true,
-        "lowpass_cutoff": 3000
+        "lowpass_cutoff": 3000,
+        "volume_boost": 4
       }
     },
     {
@@ -43,7 +46,8 @@
         "distortion_drive": 15,
         "pitch_shift": -6,
         "reverb_room_size": 0.6,
-        "reverb_wetness": 0.4
+        "reverb_wetness": 0.4,
+        "volume_boost": 5
       }
     },
     {
@@ -54,7 +58,94 @@
         "distortion_drive": 5,
         "pitch_shift": 5,
         "reverb_room_size": 0.2,
-        "reverb_wetness": 0.1
+        "reverb_wetness": 0.1,
+        "volume_boost": 2
+      }
+    },
+    {
+      "name": "Orc Warrior",
+      "description": "Gruff, aggressive voice with slight distortion",
+      "effects": {
+        "ring_modulator_freq": 0,
+        "distortion_drive": 8,
+        "pitch_shift": -2,
+        "reverb_room_size": 0.3,
+        "reverb_wetness": 0.15,
+        "volume_boost": 4
+      }
+    },
+    {
+      "name": "Lich",
+      "description": "Ancient undead spellcaster with hollow echo",
+      "effects": {
+        "ring_modulator_freq": 0,
+        "distortion_drive": 3,
+        "pitch_shift": -3,
+        "reverb_room_size": 0.85,
+        "reverb_wetness": 0.7,
+        "chorus_enabled": true,
+        "volume_boost": 5
+      }
+    },
+    {
+      "name": "Fey Creature",
+      "description": "Magical, whimsical voice with shimmer",
+      "effects": {
+        "ring_modulator_freq": 0,
+        "distortion_drive": 0,
+        "pitch_shift": 4,
+        "reverb_room_size": 0.6,
+        "reverb_wetness": 0.4,
+        "chorus_enabled": true,
+        "volume_boost": 3
+      }
+    },
+    {
+      "name": "Giant",
+      "description": "Enormous, booming voice",
+      "effects": {
+        "ring_modulator_freq": 0,
+        "distortion_drive": 2,
+        "pitch_shift": -7,
+        "reverb_room_size": 0.9,
+        "reverb_wetness": 0.6,
+        "volume_boost": 8
+      }
+    },
+    {
+      "name": "Elemental (Fire)",
+      "description": "Crackling, intense voice with distortion",
+      "effects": {
+        "ring_modulator_freq": 25,
+        "distortion_drive": 12,
+        "pitch_shift": 1,
+        "reverb_room_size": 0.4,
+        "reverb_wetness": 0.3,
+        "volume_boost": 5
+      }
+    },
+    {
+      "name": "Vampire",
+      "description": "Seductive, menacing voice with slight echo",
+      "effects": {
+        "ring_modulator_freq": 0,
+        "distortion_drive": 1,
+        "pitch_shift": -1,
+        "reverb_room_size": 0.5,
+        "reverb_wetness": 0.25,
+        "volume_boost": 3
+      }
+    },
+    {
+      "name": "Construct Guardian",
+      "description": "Heavy mechanical voice with deep tone",
+      "effects": {
+        "ring_modulator_freq": 40,
+        "distortion_drive": 8,
+        "pitch_shift": -3,
+        "reverb_room_size": 0.35,
+        "reverb_wetness": 0.2,
+        "volume_boost": 6
       }
     }
   ]
