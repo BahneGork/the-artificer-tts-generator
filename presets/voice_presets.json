@@ -1,7 +1,7 @@
 {
   "presets": [
     {
-      "name": "Warforged",
+      "name": "Clockwork",
       "description": "Mechanical construct voice with metallic resonance",
       "effects": {
         "ring_modulator_freq": 50,
