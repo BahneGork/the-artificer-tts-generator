@@ -58,8 +58,9 @@ def main():
     print("  Quality: Medium (good balance of quality and speed)")
     print()
 
-    # Base URL for Piper releases
-    base_url = "https://github.com/rhasspy/piper/releases/download/v1.2.0"
+    # Base URL for Piper voice models
+    # Note: Voice models are in separate releases from the main Piper releases
+    base_url = "https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/lessac/medium"
 
     # Download .onnx file
     print("Step 1/2: Downloading voice model...")
@@ -72,7 +73,7 @@ def main():
     if not success:
         print()
         print("Download failed. Please download manually:")
-        print(f"  1. Visit: {base_url}")
+        print("  1. Visit: https://huggingface.co/rhasspy/piper-voices/tree/v1.0.0/en/en_US/lessac/medium")
         print("  2. Download: en_US-lessac-medium.onnx")
         print("  3. Download: en_US-lessac-medium.onnx.json")
         print(f"  4. Place both files in: {models_dir}")
@@ -90,7 +91,7 @@ def main():
     if not success:
         print()
         print("Download failed. Please download manually:")
-        print(f"  1. Visit: {base_url}")
+        print("  1. Visit: https://huggingface.co/rhasspy/piper-voices/tree/v1.0.0/en/en_US/lessac/medium")
         print("  2. Download: en_US-lessac-medium.onnx.json")
         print(f"  3. Place in: {models_dir}")
         return 1
