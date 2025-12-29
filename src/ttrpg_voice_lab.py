@@ -360,8 +360,11 @@ class TTRPGVoiceLab(ctk.CTk):
 
             # Find piper executable
             if getattr(sys, 'frozen', False):
-                # Running as frozen executable - piper.exe should be next to the EXE
-                piper_exe = Path(sys.executable).parent / 'piper.exe'
+                # Running as frozen executable - piper.exe is in _internal folder
+                if hasattr(sys, '_MEIPASS'):
+                    piper_exe = Path(sys._MEIPASS) / 'piper.exe'
+                else:
+                    piper_exe = Path(sys.executable).parent / '_internal' / 'piper.exe'
             else:
                 # Running as script - try to find piper in PATH or project root
                 piper_exe = 'piper'
