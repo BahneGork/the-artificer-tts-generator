@@ -537,7 +537,9 @@ class TTRPGVoiceLab(ctk.CTk):
             self.status_label.configure(text="Preview complete - Ready")
 
         except Exception as e:
-            messagebox.showerror("Error", f"Preview failed: {str(e)}")
+            import traceback
+            error_details = traceback.format_exc()
+            messagebox.showerror("Error", f"Preview failed: {str(e)}\n\nDetails:\n{error_details}")
             self.status_label.configure(text="Error - Ready")
         finally:
             self.is_generating = False
