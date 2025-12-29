@@ -350,10 +350,14 @@ class TTRPGVoiceLab(ctk.CTk):
 
             model_path = str(onnx_files[0])
 
-            # Create temporary output file
-            temp_output = tempfile.NamedTemporaryFile(suffix='.wav', delete=False)
-            temp_output.close()
-            self.temp_files.append(temp_output.name)
+            # Create temporary output file in a writable location
+            # Use the exports directory which we know is writable
+            temp_dir = self.exports_dir / 'temp'
+            temp_dir.mkdir(exist_ok=True)
+
+            import uuid
+            temp_filename = temp_dir / f"tts_{uuid.uuid4().hex}.wav"
+            self.temp_files.append(str(temp_filename))
 
             # Use piper-tts command line
             import subprocess
@@ -383,7 +387,7 @@ class TTRPGVoiceLab(ctk.CTk):
             cmd = [
                 str(piper_exe),
                 '--model', model_path,
-                '--output_file', temp_output.name
+                '--output_file', str(temp_filename)
             ]
 
             # Run piper with text input
@@ -401,7 +405,7 @@ class TTRPGVoiceLab(ctk.CTk):
             if process.returncode != 0:
                 raise Exception(f"Piper failed: {stderr}")
 
-            return temp_output.name
+            return str(temp_filename)
 
         except Exception as e:
             messagebox.showerror("TTS Error", f"Failed to generate TTS: {str(e)}")
@@ -511,21 +515,23 @@ class TTRPGVoiceLab(ctk.CTk):
                 return
 
             # Save to temporary file for playback
-            temp_preview = tempfile.NamedTemporaryFile(suffix='.wav', delete=False)
-            temp_preview.close()
-            self.temp_files.append(temp_preview.name)
+            import uuid
+            temp_dir = self.exports_dir / 'temp'
+            temp_dir.mkdir(exist_ok=True)
+            temp_preview_path = temp_dir / f"preview_{uuid.uuid4().hex}.wav"
+            self.temp_files.append(str(temp_preview_path))
 
-            processed_audio.export(temp_preview.name, format='wav')
+            processed_audio.export(str(temp_preview_path), format='wav')
 
             self.status_label.configure(text="Playing preview...")
 
             # Play audio using pygame or pydub
             if PYGAME_AVAILABLE:
-                pygame.mixer.music.load(temp_preview.name)
+                pygame.mixer.music.load(str(temp_preview_path))
                 pygame.mixer.music.play()
             else:
                 # Use pydub playback as fallback
-                preview_audio = AudioSegment.from_wav(temp_preview.name)
+                preview_audio = AudioSegment.from_wav(str(temp_preview_path))
                 play(preview_audio)
 
             self.status_label.configure(text="Preview complete - Ready")
