@@ -10,10 +10,10 @@ echo.
 
 REM Step 1: Check for PyInstaller
 echo [Step 1/4] Checking dependencies...
-pip show pyinstaller >nul 2>&1
+python -m pip show pyinstaller >nul 2>&1
 if errorlevel 1 (
     echo Installing PyInstaller...
-    pip install pyinstaller
+    python -m pip install pyinstaller
 )
 echo.
 
@@ -22,7 +22,7 @@ echo [Step 2/4] Building EXE with PyInstaller...
 if exist build rmdir /s /q build
 if exist dist\TTRPGVoiceLab rmdir /s /q dist\TTRPGVoiceLab
 
-pyinstaller ttrpg_voice_lab.spec
+python -m PyInstaller ttrpg_voice_lab.spec
 if errorlevel 1 (
     echo.
     echo ERROR: PyInstaller build failed!

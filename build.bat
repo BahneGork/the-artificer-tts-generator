@@ -9,10 +9,10 @@ echo ========================================
 echo.
 
 REM Check if PyInstaller is installed
-pip show pyinstaller >nul 2>&1
+python -m pip show pyinstaller >nul 2>&1
 if errorlevel 1 (
     echo Installing PyInstaller...
-    pip install pyinstaller
+    python -m pip install pyinstaller
     echo.
 )
 
@@ -24,7 +24,7 @@ echo.
 
 REM Run PyInstaller
 echo Building executable...
-pyinstaller ttrpg_voice_lab.spec
+python -m PyInstaller ttrpg_voice_lab.spec
 if errorlevel 1 (
     echo.
     echo ERROR: Build failed!
