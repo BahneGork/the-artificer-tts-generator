@@ -544,7 +544,15 @@ class TTRPGVoiceLab(ctk.CTk):
         except Exception as e:
             import traceback
             error_details = traceback.format_exc()
-            messagebox.showerror("Error", f"Preview failed: {str(e)}\n\nDetails:\n{error_details}")
+
+            # Write error to log file
+            log_file = Path(sys.executable).parent / "error_log.txt"
+            with open(log_file, 'w') as f:
+                f.write(f"Error: {str(e)}\n\n")
+                f.write(f"Exports dir: {self.exports_dir}\n\n")
+                f.write(f"Traceback:\n{error_details}")
+
+            messagebox.showerror("Error", f"Preview failed: {str(e)}\n\nError log saved to: {log_file}")
             self.status_label.configure(text="Error - Ready")
         finally:
             self.is_generating = False
