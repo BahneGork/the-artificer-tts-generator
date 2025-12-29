@@ -3,6 +3,7 @@ pedalboard>=0.9.0
 pydub>=0.25.1
 numpy>=1.24.0
 pyinstaller>=6.0.0
+pyaudioop>=0.3.4  # Required for Python 3.13+ (audioop replacement)
 # Note: Piper TTS is a standalone executable, not a pip package
 # Download from: https://github.com/rhasspy/piper/releases
 # pygame>=2.5.0  # Optional - only needed for preview playback

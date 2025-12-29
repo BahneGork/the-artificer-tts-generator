@@ -20,9 +20,11 @@ hiddenimports = [
     'piper',
     'pedalboard',
     'pydub',
+    'pydub.playback',
     'pygame',
     'numpy',
     'customtkinter',
+    'pyaudioop',  # Required for Python 3.13+
 ]
 
 # Add pedalboard data files
