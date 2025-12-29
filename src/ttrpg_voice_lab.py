@@ -59,8 +59,14 @@ class TTRPGVoiceLab(ctk.CTk):
         self.temp_files: list = []
         self.is_generating = False
 
-        # Paths
-        self.base_dir = Path(__file__).parent.parent
+        # Paths - handle both development and PyInstaller frozen app
+        if getattr(sys, 'frozen', False):
+            # Running as compiled executable
+            self.base_dir = Path(sys.executable).parent
+        else:
+            # Running as script
+            self.base_dir = Path(__file__).parent.parent
+
         self.models_dir = self.base_dir / "models"
         self.presets_dir = self.base_dir / "presets"
         self.exports_dir = self.base_dir / "exports"
