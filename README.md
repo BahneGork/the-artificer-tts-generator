@@ -116,19 +116,30 @@ the-artificer-tts-generator/
 
 ## Building for Distribution
 
-### Windows EXE
+### Windows Installer (Recommended)
 
-```bash
-# Install PyInstaller
-pip install pyinstaller
+Build a professional installer with Start Menu shortcuts and proper uninstaller:
 
-# Build the executable
-pyinstaller ttrpg_voice_lab.spec
-
-# Find output in: dist/TTRPGVoiceLab/
+```powershell
+# One command to build everything
+.\build-installer.bat
 ```
 
-**Important**: Copy the `models/` folder into `dist/TTRPGVoiceLab/` before distributing.
+**Output**: `installer_output/TheArtificer-TTS-Setup-1.0.0.exe`
+
+**Prerequisites**:
+- Install [Inno Setup](https://jrsoftware.org/isdl.php)
+- See [docs/INSTALLER_BUILD.md](docs/INSTALLER_BUILD.md) for details
+
+### Portable EXE (Alternative)
+
+Build a portable executable that doesn't require installation:
+
+```powershell
+.\build.bat
+```
+
+**Output**: `dist/TTRPGVoiceLab/TTRPGVoiceLab.exe`
 
 See [docs/SETUP.md](docs/SETUP.md) for detailed build instructions.
 
