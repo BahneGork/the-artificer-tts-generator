@@ -4,148 +4,204 @@
       "name": "Clockwork",
       "description": "Mechanical construct voice with metallic resonance",
       "effects": {
-        "ring_modulator_freq": 50,
-        "distortion_drive": 10,
+        "speech_rate": 0.9,
         "pitch_shift": 0,
+        "distortion_drive": 10,
+        "ring_modulator_freq": 50,
+        "volume_boost": 3,
         "reverb_room_size": 0.3,
         "reverb_wetness": 0.2,
-        "volume_boost": 3
+        "chorus_depth": 0.0,
+        "delay_time_ms": 0,
+        "lowpass_cutoff": 8000,
+        "highpass_cutoff": 50
       }
     },
     {
       "name": "Ancient Dragon",
       "description": "Deep, resonant voice with cavernous reverb",
       "effects": {
-        "ring_modulator_freq": 0,
-        "distortion_drive": 0,
+        "speech_rate": 0.7,
         "pitch_shift": -4,
+        "distortion_drive": 2,
+        "ring_modulator_freq": 0,
+        "volume_boost": 6,
         "reverb_room_size": 0.8,
         "reverb_wetness": 0.5,
-        "volume_boost": 6
+        "chorus_depth": 0.2,
+        "delay_time_ms": 100,
+        "lowpass_cutoff": 5000,
+        "highpass_cutoff": 50
       }
     },
     {
       "name": "Ghostly Apparition",
       "description": "Ethereal, otherworldly voice with chorus and heavy reverb",
       "effects": {
-        "ring_modulator_freq": 0,
-        "distortion_drive": 0,
+        "speech_rate": 0.85,
         "pitch_shift": 2,
+        "distortion_drive": 0,
+        "ring_modulator_freq": 0,
+        "volume_boost": 4,
         "reverb_room_size": 0.9,
         "reverb_wetness": 1.0,
-        "chorus_enabled": true,
+        "chorus_depth": 0.8,
+        "delay_time_ms": 200,
         "lowpass_cutoff": 3000,
-        "volume_boost": 4
+        "highpass_cutoff": 50
       }
     },
     {
       "name": "Demon Lord",
       "description": "Dark, distorted voice with heavy processing",
       "effects": {
-        "ring_modulator_freq": 30,
-        "distortion_drive": 15,
+        "speech_rate": 0.75,
         "pitch_shift": -6,
+        "distortion_drive": 15,
+        "ring_modulator_freq": 30,
+        "volume_boost": 5,
         "reverb_room_size": 0.6,
         "reverb_wetness": 0.4,
-        "volume_boost": 5
+        "chorus_depth": 0.3,
+        "delay_time_ms": 80,
+        "lowpass_cutoff": 4000,
+        "highpass_cutoff": 50
       }
     },
     {
       "name": "Goblin",
       "description": "High-pitched, nasally creature voice",
       "effects": {
-        "ring_modulator_freq": 0,
-        "distortion_drive": 5,
+        "speech_rate": 1.4,
         "pitch_shift": 5,
+        "distortion_drive": 5,
+        "ring_modulator_freq": 0,
+        "volume_boost": 2,
         "reverb_room_size": 0.2,
         "reverb_wetness": 0.1,
-        "volume_boost": 2
+        "chorus_depth": 0.0,
+        "delay_time_ms": 0,
+        "lowpass_cutoff": 6000,
+        "highpass_cutoff": 200
       }
     },
     {
       "name": "Orc Warrior",
       "description": "Gruff, aggressive voice with slight distortion",
       "effects": {
-        "ring_modulator_freq": 0,
-        "distortion_drive": 8,
+        "speech_rate": 1.1,
         "pitch_shift": -2,
+        "distortion_drive": 8,
+        "ring_modulator_freq": 0,
+        "volume_boost": 4,
         "reverb_room_size": 0.3,
         "reverb_wetness": 0.15,
-        "volume_boost": 4
+        "chorus_depth": 0.0,
+        "delay_time_ms": 0,
+        "lowpass_cutoff": 8000,
+        "highpass_cutoff": 50
       }
     },
     {
       "name": "Lich",
       "description": "Ancient undead spellcaster with hollow echo",
       "effects": {
-        "ring_modulator_freq": 0,
-        "distortion_drive": 3,
+        "speech_rate": 0.8,
         "pitch_shift": -3,
+        "distortion_drive": 3,
+        "ring_modulator_freq": 0,
+        "volume_boost": 5,
         "reverb_room_size": 0.85,
         "reverb_wetness": 0.7,
-        "chorus_enabled": true,
-        "volume_boost": 5
+        "chorus_depth": 0.6,
+        "delay_time_ms": 150,
+        "lowpass_cutoff": 8000,
+        "highpass_cutoff": 50
       }
     },
     {
       "name": "Fey Creature",
       "description": "Magical, whimsical voice with shimmer",
       "effects": {
-        "ring_modulator_freq": 0,
-        "distortion_drive": 0,
+        "speech_rate": 1.2,
         "pitch_shift": 4,
+        "distortion_drive": 0,
+        "ring_modulator_freq": 0,
+        "volume_boost": 3,
         "reverb_room_size": 0.6,
         "reverb_wetness": 0.4,
-        "chorus_enabled": true,
-        "volume_boost": 3
+        "chorus_depth": 0.7,
+        "delay_time_ms": 50,
+        "lowpass_cutoff": 8000,
+        "highpass_cutoff": 50
       }
     },
     {
       "name": "Giant",
       "description": "Enormous, booming voice",
       "effects": {
-        "ring_modulator_freq": 0,
-        "distortion_drive": 2,
+        "speech_rate": 0.65,
         "pitch_shift": -7,
+        "distortion_drive": 2,
+        "ring_modulator_freq": 0,
+        "volume_boost": 8,
         "reverb_room_size": 0.9,
         "reverb_wetness": 0.6,
-        "volume_boost": 8
+        "chorus_depth": 0.0,
+        "delay_time_ms": 120,
+        "lowpass_cutoff": 4000,
+        "highpass_cutoff": 50
       }
     },
     {
       "name": "Elemental (Fire)",
       "description": "Crackling, intense voice with distortion",
       "effects": {
-        "ring_modulator_freq": 25,
-        "distortion_drive": 12,
+        "speech_rate": 1.15,
         "pitch_shift": 1,
+        "distortion_drive": 12,
+        "ring_modulator_freq": 25,
+        "volume_boost": 5,
         "reverb_room_size": 0.4,
         "reverb_wetness": 0.3,
-        "volume_boost": 5
+        "chorus_depth": 0.2,
+        "delay_time_ms": 30,
+        "lowpass_cutoff": 7000,
+        "highpass_cutoff": 50
       }
     },
     {
       "name": "Vampire",
       "description": "Seductive, menacing voice with slight echo",
       "effects": {
-        "ring_modulator_freq": 0,
-        "distortion_drive": 1,
+        "speech_rate": 0.95,
         "pitch_shift": -1,
+        "distortion_drive": 1,
+        "ring_modulator_freq": 0,
+        "volume_boost": 3,
         "reverb_room_size": 0.5,
         "reverb_wetness": 0.25,
-        "volume_boost": 3
+        "chorus_depth": 0.15,
+        "delay_time_ms": 60,
+        "lowpass_cutoff": 8000,
+        "highpass_cutoff": 50
       }
     },
     {
       "name": "Construct Guardian",
       "description": "Heavy mechanical voice with deep tone",
       "effects": {
-        "ring_modulator_freq": 40,
-        "distortion_drive": 8,
+        "speech_rate": 0.85,
         "pitch_shift": -3,
+        "distortion_drive": 8,
+        "ring_modulator_freq": 40,
+        "volume_boost": 6,
         "reverb_room_size": 0.35,
         "reverb_wetness": 0.2,
-        "volume_boost": 6
+        "chorus_depth": 0.0,
+        "delay_time_ms": 0,
+        "lowpass_cutoff": 6000,
+        "highpass_cutoff": 50
       }
     }
   ]

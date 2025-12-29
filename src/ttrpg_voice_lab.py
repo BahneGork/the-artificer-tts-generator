@@ -22,6 +22,8 @@ from pedalboard import (
     Distortion,
     Chorus,
     LowpassFilter,
+    HighpassFilter,
+    Delay,
     PitchShift
 )
 
@@ -187,17 +189,40 @@ class TTRPGVoiceLab(ctk.CTk):
         self.text_input.grid(row=1, column=0, padx=10, pady=(0, 10), sticky="nsew")
         self.text_input.insert("1.0", "Greetings, adventurer. What brings you to these lands?")
 
-        # Effect controls frame
+        # Effect controls frame - Row 1
         self.controls_frame = ctk.CTkFrame(self.main_frame)
         self.controls_frame.grid(row=3, column=0, padx=20, pady=10, sticky="ew")
-        self.controls_frame.grid_columnconfigure((0, 1, 2, 3), weight=1)
+        self.controls_frame.grid_columnconfigure((0, 1, 2, 3, 4), weight=1)
+
+        # Speech Rate slider
+        ctk.CTkLabel(
+            self.controls_frame,
+            text="Speech Rate:",
+            font=ctk.CTkFont(size=11)
+        ).grid(row=0, column=0, padx=5, pady=(10, 5), sticky="w")
+
+        self.speech_rate_slider = ctk.CTkSlider(
+            self.controls_frame,
+            from_=0.5,
+            to=2.0,
+            number_of_steps=30,
+            command=self.update_speech_rate_label
+        )
+        self.speech_rate_slider.grid(row=1, column=0, padx=5, pady=(0, 10), sticky="ew")
+        self.speech_rate_slider.set(1.0)
+
+        self.speech_rate_value_label = ctk.CTkLabel(
+            self.controls_frame,
+            text="1.0x"
+        )
+        self.speech_rate_value_label.grid(row=2, column=0, padx=5, pady=(0, 10))
 
         # Pitch shift slider
         ctk.CTkLabel(
             self.controls_frame,
-            text="Pitch Shift (semitones):",
-            font=ctk.CTkFont(size=12)
-        ).grid(row=0, column=0, padx=10, pady=(10, 5), sticky="w")
+            text="Pitch Shift:",
+            font=ctk.CTkFont(size=11)
+        ).grid(row=0, column=1, padx=5, pady=(10, 5), sticky="w")
 
         self.pitch_slider = ctk.CTkSlider(
             self.controls_frame,
@@ -206,21 +231,44 @@ class TTRPGVoiceLab(ctk.CTk):
             number_of_steps=24,
             command=self.update_pitch_label
         )
-        self.pitch_slider.grid(row=1, column=0, padx=10, pady=(0, 10), sticky="ew")
+        self.pitch_slider.grid(row=1, column=1, padx=5, pady=(0, 10), sticky="ew")
         self.pitch_slider.set(0)
 
         self.pitch_value_label = ctk.CTkLabel(
             self.controls_frame,
             text="0"
         )
-        self.pitch_value_label.grid(row=2, column=0, padx=10, pady=(0, 10))
+        self.pitch_value_label.grid(row=2, column=1, padx=5, pady=(0, 10))
+
+        # Distortion slider
+        ctk.CTkLabel(
+            self.controls_frame,
+            text="Distortion:",
+            font=ctk.CTkFont(size=11)
+        ).grid(row=0, column=2, padx=5, pady=(10, 5), sticky="w")
+
+        self.distortion_slider = ctk.CTkSlider(
+            self.controls_frame,
+            from_=0,
+            to=20,
+            number_of_steps=40,
+            command=self.update_distortion_label
+        )
+        self.distortion_slider.grid(row=1, column=2, padx=5, pady=(0, 10), sticky="ew")
+        self.distortion_slider.set(0)
+
+        self.distortion_value_label = ctk.CTkLabel(
+            self.controls_frame,
+            text="0 dB"
+        )
+        self.distortion_value_label.grid(row=2, column=2, padx=5, pady=(0, 10))
 
         # Mechanical frequency slider (Ring Modulator)
         ctk.CTkLabel(
             self.controls_frame,
-            text="Mechanical Freq (Hz):",
-            font=ctk.CTkFont(size=12)
-        ).grid(row=0, column=1, padx=10, pady=(10, 5), sticky="w")
+            text="Mechanical:",
+            font=ctk.CTkFont(size=11)
+        ).grid(row=0, column=3, padx=5, pady=(10, 5), sticky="w")
 
         self.mech_freq_slider = ctk.CTkSlider(
             self.controls_frame,
@@ -229,44 +277,21 @@ class TTRPGVoiceLab(ctk.CTk):
             number_of_steps=40,
             command=self.update_mech_label
         )
-        self.mech_freq_slider.grid(row=1, column=1, padx=10, pady=(0, 10), sticky="ew")
+        self.mech_freq_slider.grid(row=1, column=3, padx=5, pady=(0, 10), sticky="ew")
         self.mech_freq_slider.set(0)
 
         self.mech_value_label = ctk.CTkLabel(
             self.controls_frame,
             text="0 Hz"
         )
-        self.mech_value_label.grid(row=2, column=1, padx=10, pady=(0, 10))
-
-        # Echo/Reverb level slider
-        ctk.CTkLabel(
-            self.controls_frame,
-            text="Echo Level:",
-            font=ctk.CTkFont(size=12)
-        ).grid(row=0, column=2, padx=10, pady=(10, 5), sticky="w")
-
-        self.echo_slider = ctk.CTkSlider(
-            self.controls_frame,
-            from_=0,
-            to=1,
-            number_of_steps=20,
-            command=self.update_echo_label
-        )
-        self.echo_slider.grid(row=1, column=2, padx=10, pady=(0, 10), sticky="ew")
-        self.echo_slider.set(0.3)
-
-        self.echo_value_label = ctk.CTkLabel(
-            self.controls_frame,
-            text="30%"
-        )
-        self.echo_value_label.grid(row=2, column=2, padx=10, pady=(0, 10))
+        self.mech_value_label.grid(row=2, column=3, padx=5, pady=(0, 10))
 
         # Volume boost slider
         ctk.CTkLabel(
             self.controls_frame,
-            text="Volume Boost (dB):",
-            font=ctk.CTkFont(size=12)
-        ).grid(row=0, column=3, padx=10, pady=(10, 5), sticky="w")
+            text="Volume:",
+            font=ctk.CTkFont(size=11)
+        ).grid(row=0, column=4, padx=5, pady=(10, 5), sticky="w")
 
         self.volume_slider = ctk.CTkSlider(
             self.controls_frame,
@@ -275,18 +300,138 @@ class TTRPGVoiceLab(ctk.CTk):
             number_of_steps=24,
             command=self.update_volume_label
         )
-        self.volume_slider.grid(row=1, column=3, padx=10, pady=(0, 10), sticky="ew")
+        self.volume_slider.grid(row=1, column=4, padx=5, pady=(0, 10), sticky="ew")
         self.volume_slider.set(3)
 
         self.volume_value_label = ctk.CTkLabel(
             self.controls_frame,
             text="+3 dB"
         )
-        self.volume_value_label.grid(row=2, column=3, padx=10, pady=(0, 10))
+        self.volume_value_label.grid(row=2, column=4, padx=5, pady=(0, 10))
+
+        # Effect controls frame - Row 2
+        self.controls_frame2 = ctk.CTkFrame(self.main_frame)
+        self.controls_frame2.grid(row=4, column=0, padx=20, pady=(0, 10), sticky="ew")
+        self.controls_frame2.grid_columnconfigure((0, 1, 2, 3, 4), weight=1)
+
+        # Echo/Reverb level slider
+        ctk.CTkLabel(
+            self.controls_frame2,
+            text="Echo Level:",
+            font=ctk.CTkFont(size=11)
+        ).grid(row=0, column=0, padx=5, pady=(10, 5), sticky="w")
+
+        self.echo_slider = ctk.CTkSlider(
+            self.controls_frame2,
+            from_=0,
+            to=1,
+            number_of_steps=20,
+            command=self.update_echo_label
+        )
+        self.echo_slider.grid(row=1, column=0, padx=5, pady=(0, 10), sticky="ew")
+        self.echo_slider.set(0.3)
+
+        self.echo_value_label = ctk.CTkLabel(
+            self.controls_frame2,
+            text="30%"
+        )
+        self.echo_value_label.grid(row=2, column=0, padx=5, pady=(0, 10))
+
+        # Chorus Depth slider
+        ctk.CTkLabel(
+            self.controls_frame2,
+            text="Chorus Depth:",
+            font=ctk.CTkFont(size=11)
+        ).grid(row=0, column=1, padx=5, pady=(10, 5), sticky="w")
+
+        self.chorus_slider = ctk.CTkSlider(
+            self.controls_frame2,
+            from_=0,
+            to=1,
+            number_of_steps=20,
+            command=self.update_chorus_label
+        )
+        self.chorus_slider.grid(row=1, column=1, padx=5, pady=(0, 10), sticky="ew")
+        self.chorus_slider.set(0)
+
+        self.chorus_value_label = ctk.CTkLabel(
+            self.controls_frame2,
+            text="Off"
+        )
+        self.chorus_value_label.grid(row=2, column=1, padx=5, pady=(0, 10))
+
+        # Delay Time slider
+        ctk.CTkLabel(
+            self.controls_frame2,
+            text="Delay Time:",
+            font=ctk.CTkFont(size=11)
+        ).grid(row=0, column=2, padx=5, pady=(10, 5), sticky="w")
+
+        self.delay_slider = ctk.CTkSlider(
+            self.controls_frame2,
+            from_=0,
+            to=500,
+            number_of_steps=50,
+            command=self.update_delay_label
+        )
+        self.delay_slider.grid(row=1, column=2, padx=5, pady=(0, 10), sticky="ew")
+        self.delay_slider.set(0)
+
+        self.delay_value_label = ctk.CTkLabel(
+            self.controls_frame2,
+            text="Off"
+        )
+        self.delay_value_label.grid(row=2, column=2, padx=5, pady=(0, 10))
+
+        # Low-pass Filter slider
+        ctk.CTkLabel(
+            self.controls_frame2,
+            text="Low-pass:",
+            font=ctk.CTkFont(size=11)
+        ).grid(row=0, column=3, padx=5, pady=(10, 5), sticky="w")
+
+        self.lowpass_slider = ctk.CTkSlider(
+            self.controls_frame2,
+            from_=1000,
+            to=8000,
+            number_of_steps=70,
+            command=self.update_lowpass_label
+        )
+        self.lowpass_slider.grid(row=1, column=3, padx=5, pady=(0, 10), sticky="ew")
+        self.lowpass_slider.set(8000)
+
+        self.lowpass_value_label = ctk.CTkLabel(
+            self.controls_frame2,
+            text="Off"
+        )
+        self.lowpass_value_label.grid(row=2, column=3, padx=5, pady=(0, 10))
+
+        # High-pass Filter slider
+        ctk.CTkLabel(
+            self.controls_frame2,
+            text="High-pass:",
+            font=ctk.CTkFont(size=11)
+        ).grid(row=0, column=4, padx=5, pady=(10, 5), sticky="w")
+
+        self.highpass_slider = ctk.CTkSlider(
+            self.controls_frame2,
+            from_=50,
+            to=500,
+            number_of_steps=45,
+            command=self.update_highpass_label
+        )
+        self.highpass_slider.grid(row=1, column=4, padx=5, pady=(0, 10), sticky="ew")
+        self.highpass_slider.set(50)
+
+        self.highpass_value_label = ctk.CTkLabel(
+            self.controls_frame2,
+            text="Off"
+        )
+        self.highpass_value_label.grid(row=2, column=4, padx=5, pady=(0, 10))
 
         # Action buttons
         self.button_frame = ctk.CTkFrame(self.main_frame)
-        self.button_frame.grid(row=4, column=0, padx=20, pady=20, sticky="ew")
+        self.button_frame.grid(row=5, column=0, padx=20, pady=20, sticky="ew")
         self.button_frame.grid_columnconfigure((0, 1), weight=1)
 
         self.preview_button = ctk.CTkButton(
@@ -315,23 +460,53 @@ class TTRPGVoiceLab(ctk.CTk):
             text="Ready",
             font=ctk.CTkFont(size=12)
         )
-        self.status_label.grid(row=5, column=0, padx=20, pady=(0, 10))
+        self.status_label.grid(row=6, column=0, padx=20, pady=(0, 10))
+
+    def update_speech_rate_label(self, value):
+        """Update speech rate slider label"""
+        self.speech_rate_value_label.configure(text=f"{float(value):.1f}x")
 
     def update_pitch_label(self, value):
         """Update pitch slider label"""
         self.pitch_value_label.configure(text=f"{int(float(value))}")
 
+    def update_distortion_label(self, value):
+        """Update distortion slider label"""
+        val = int(float(value))
+        self.distortion_value_label.configure(text=f"{val} dB" if val > 0 else "Off")
+
     def update_mech_label(self, value):
         """Update mechanical frequency slider label"""
-        self.mech_value_label.configure(text=f"{int(float(value))} Hz")
+        val = int(float(value))
+        self.mech_value_label.configure(text=f"{val} Hz" if val > 0 else "Off")
+
+    def update_volume_label(self, value):
+        """Update volume slider label"""
+        self.volume_value_label.configure(text=f"+{int(float(value))} dB")
 
     def update_echo_label(self, value):
         """Update echo slider label"""
         self.echo_value_label.configure(text=f"{int(float(value) * 100)}%")
 
-    def update_volume_label(self, value):
-        """Update volume slider label"""
-        self.volume_value_label.configure(text=f"+{int(float(value))} dB")
+    def update_chorus_label(self, value):
+        """Update chorus slider label"""
+        val = float(value)
+        self.chorus_value_label.configure(text=f"{int(val * 100)}%" if val > 0.05 else "Off")
+
+    def update_delay_label(self, value):
+        """Update delay slider label"""
+        val = int(float(value))
+        self.delay_value_label.configure(text=f"{val}ms" if val > 0 else "Off")
+
+    def update_lowpass_label(self, value):
+        """Update low-pass slider label"""
+        val = int(float(value))
+        self.lowpass_value_label.configure(text=f"{val}Hz" if val < 7900 else "Off")
+
+    def update_highpass_label(self, value):
+        """Update high-pass slider label"""
+        val = int(float(value))
+        self.highpass_value_label.configure(text=f"{val}Hz" if val > 60 else "Off")
 
     def load_preset(self, preset: Dict[str, Any]):
         """Load a voice preset and update UI"""
@@ -340,16 +515,32 @@ class TTRPGVoiceLab(ctk.CTk):
 
         # Update sliders based on preset
         effects = preset['effects']
+
+        # Row 1 controls
+        self.speech_rate_slider.set(effects.get('speech_rate', 1.0))
         self.pitch_slider.set(effects.get('pitch_shift', 0))
+        self.distortion_slider.set(effects.get('distortion_drive', 0))
         self.mech_freq_slider.set(effects.get('ring_modulator_freq', 0))
-        self.echo_slider.set(effects.get('reverb_wetness', 0.3))
         self.volume_slider.set(effects.get('volume_boost', 3))
 
+        # Row 2 controls
+        self.echo_slider.set(effects.get('reverb_wetness', 0.3))
+        self.chorus_slider.set(effects.get('chorus_depth', 0.0))
+        self.delay_slider.set(effects.get('delay_time_ms', 0))
+        self.lowpass_slider.set(effects.get('lowpass_cutoff', 8000))
+        self.highpass_slider.set(effects.get('highpass_cutoff', 50))
+
         # Update labels
+        self.update_speech_rate_label(effects.get('speech_rate', 1.0))
         self.update_pitch_label(effects.get('pitch_shift', 0))
+        self.update_distortion_label(effects.get('distortion_drive', 0))
         self.update_mech_label(effects.get('ring_modulator_freq', 0))
-        self.update_echo_label(effects.get('reverb_wetness', 0.3))
         self.update_volume_label(effects.get('volume_boost', 3))
+        self.update_echo_label(effects.get('reverb_wetness', 0.3))
+        self.update_chorus_label(effects.get('chorus_depth', 0.0))
+        self.update_delay_label(effects.get('delay_time_ms', 0))
+        self.update_lowpass_label(effects.get('lowpass_cutoff', 8000))
+        self.update_highpass_label(effects.get('highpass_cutoff', 50))
 
         self.status_label.configure(text=f"Loaded preset: {preset['name']}")
 
@@ -417,10 +608,16 @@ class TTRPGVoiceLab(ctk.CTk):
             if espeak_data.exists():
                 env['ESPEAK_DATA_PATH'] = str(espeak_data)
 
+            # Get speech rate from slider
+            speech_rate = self.speech_rate_slider.get()
+            # Piper uses length_scale which is inverse of speed
+            length_scale = 1.0 / speech_rate
+
             cmd = [
                 str(piper_exe),
                 '--model', model_path,
-                '--output_file', str(temp_filename)
+                '--output_file', str(temp_filename),
+                '--length_scale', str(length_scale)
             ]
 
             # Run piper with text input
@@ -457,59 +654,82 @@ class TTRPGVoiceLab(ctk.CTk):
             samples = np.array(audio.get_array_of_samples()).astype(np.float32)
             samples = samples / (2**15)  # Normalize to -1.0 to 1.0
 
-            # Get effect parameters from sliders
+            # Get all effect parameters from sliders
             pitch_shift = self.pitch_slider.get()
+            distortion_drive = self.distortion_slider.get()
             mech_freq = self.mech_freq_slider.get()
-            reverb_wetness = self.echo_slider.get()
             volume_boost = self.volume_slider.get()
+            reverb_wetness = self.echo_slider.get()
+            chorus_depth = self.chorus_slider.get()
+            delay_time = self.delay_slider.get()
+            lowpass_cutoff = self.lowpass_slider.get()
+            highpass_cutoff = self.highpass_slider.get()
 
             # Build effects chain
             board = Pedalboard()
 
-            # Pitch shift
+            # 1. Pitch shift (first in chain for best quality)
             if abs(pitch_shift) > 0.1:
                 board.append(PitchShift(semitones=pitch_shift))
 
-            # Ring modulator for mechanical effect
-            if mech_freq > 0:
-                # Simulate ring modulator with amplitude modulation
+            # 2. Ring modulator for mechanical effect (applied directly to samples)
+            if mech_freq > 1:
                 sample_rate = audio.frame_rate
                 t = np.arange(len(samples)) / sample_rate
                 modulator = np.sin(2 * np.pi * mech_freq * t)
                 samples = samples * modulator
 
-            # Distortion (if preset includes it)
-            if self.current_preset:
-                distortion_drive = self.current_preset['effects'].get('distortion_drive', 0)
-                if distortion_drive > 0:
-                    board.append(Distortion(drive_db=distortion_drive))
+            # 3. Distortion (adds grit and aggression)
+            if distortion_drive > 0.1:
+                board.append(Distortion(drive_db=distortion_drive))
 
-            # Chorus (if preset includes it)
-            if self.current_preset and self.current_preset['effects'].get('chorus_enabled', False):
-                board.append(Chorus())
+            # 4. High-pass filter (remove low frequencies for tinny/radio effect)
+            if highpass_cutoff > 60:
+                board.append(HighpassFilter(cutoff_frequency_hz=highpass_cutoff))
 
-            # Low-pass filter (if preset includes it)
-            if self.current_preset and 'lowpass_cutoff' in self.current_preset['effects']:
-                cutoff = self.current_preset['effects']['lowpass_cutoff']
-                board.append(LowpassFilter(cutoff_frequency_hz=cutoff))
+            # 5. Low-pass filter (muffled/distant sound)
+            if lowpass_cutoff < 7900:
+                board.append(LowpassFilter(cutoff_frequency_hz=lowpass_cutoff))
 
-            # Reverb
+            # 6. Chorus (ethereal/haunting effect)
+            if chorus_depth > 0.05:
+                # Pedalboard Chorus doesn't expose depth directly, but we can use it when active
+                board.append(Chorus(
+                    rate_hz=1.0,
+                    depth=chorus_depth,
+                    centre_delay_ms=7.0,
+                    feedback=0.0,
+                    mix=chorus_depth
+                ))
+
+            # 7. Delay (echo effect)
+            if delay_time > 5:
+                # Delay time in seconds
+                delay_seconds = delay_time / 1000.0
+                board.append(Delay(
+                    delay_seconds=delay_seconds,
+                    feedback=0.3,
+                    mix=0.5
+                ))
+
+            # 8. Reverb (spatial/room effect - applied last for natural sound)
             room_size = 0.5
             if self.current_preset:
                 room_size = self.current_preset['effects'].get('reverb_room_size', 0.5)
 
-            board.append(
-                Reverb(
-                    room_size=room_size,
-                    wet_level=reverb_wetness,
-                    dry_level=1.0 - reverb_wetness
+            if reverb_wetness > 0.05:
+                board.append(
+                    Reverb(
+                        room_size=room_size,
+                        wet_level=reverb_wetness,
+                        dry_level=1.0 - reverb_wetness
+                    )
                 )
-            )
 
-            # Process audio
+            # Process audio through effects chain
             processed = board(samples, audio.frame_rate)
 
-            # Apply volume boost
+            # 9. Apply volume boost (final stage)
             if volume_boost > 0:
                 # Convert dB to linear gain
                 gain = 10 ** (volume_boost / 20)
