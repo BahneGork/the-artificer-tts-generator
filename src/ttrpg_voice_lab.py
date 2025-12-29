@@ -73,7 +73,13 @@ class TTRPGVoiceLab(ctk.CTk):
 
         self.models_dir = self.base_dir / "models"
         self.presets_dir = self.base_dir / "presets"
-        self.exports_dir = self.base_dir / "exports"
+
+        # Exports directory should be in a writable location
+        if getattr(sys, 'frozen', False):
+            # When frozen, use Documents folder or executable directory
+            self.exports_dir = Path(sys.executable).parent / "exports"
+        else:
+            self.exports_dir = self.base_dir / "exports"
 
         # Create exports directory if it doesn't exist
         self.exports_dir.mkdir(exist_ok=True)
