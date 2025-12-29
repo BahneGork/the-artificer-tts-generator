@@ -358,19 +358,27 @@ class TTRPGVoiceLab(ctk.CTk):
             # Use piper-tts command line
             import subprocess
 
-            # Find piper executable
+            # Find piper executable and set espeak data path
             if getattr(sys, 'frozen', False):
                 # Running as frozen executable - piper.exe is in _internal folder
                 if hasattr(sys, '_MEIPASS'):
                     piper_exe = Path(sys._MEIPASS) / 'piper.exe'
+                    espeak_data = Path(sys._MEIPASS) / 'espeak-ng-data'
                 else:
                     piper_exe = Path(sys.executable).parent / '_internal' / 'piper.exe'
+                    espeak_data = Path(sys.executable).parent / '_internal' / 'espeak-ng-data'
             else:
                 # Running as script - try to find piper in PATH or project root
                 piper_exe = 'piper'
                 project_piper = Path(__file__).parent.parent / 'piper.exe'
                 if project_piper.exists():
                     piper_exe = str(project_piper)
+                espeak_data = Path(__file__).parent.parent / 'espeak-ng-data'
+
+            # Set environment variable for espeak-ng data
+            env = os.environ.copy()
+            if espeak_data.exists():
+                env['ESPEAK_DATA_PATH'] = str(espeak_data)
 
             cmd = [
                 str(piper_exe),
@@ -384,7 +392,8 @@ class TTRPGVoiceLab(ctk.CTk):
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
-                text=True
+                text=True,
+                env=env
             )
 
             stdout, stderr = process.communicate(input=text)

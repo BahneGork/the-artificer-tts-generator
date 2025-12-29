@@ -29,6 +29,10 @@ datas = [
     ('models', 'models'),
 ]
 
+# Include espeak-ng-data if it exists
+if os.path.exists('espeak-ng-data'):
+    datas.append(('espeak-ng-data', 'espeak-ng-data'))
+
 # Collect hidden imports for audio libraries
 hiddenimports = [
     'piper',
