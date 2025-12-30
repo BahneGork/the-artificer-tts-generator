@@ -978,9 +978,54 @@ class TTRPGVoiceLab(ctk.CTk):
 
 def main():
     """Main entry point"""
-    app = TTRPGVoiceLab()
-    app.protocol("WM_DELETE_WINDOW", app.on_closing)
-    app.mainloop()
+    try:
+        app = TTRPGVoiceLab()
+        app.protocol("WM_DELETE_WINDOW", app.on_closing)
+        app.mainloop()
+    except Exception as e:
+        import traceback
+        error_details = traceback.format_exc()
+
+        # Write error to log file in a writable location
+        try:
+            if getattr(sys, 'frozen', False):
+                log_file = Path(sys.executable).parent / "startup_error.log"
+            else:
+                log_file = Path(__file__).parent.parent / "startup_error.log"
+
+            with open(log_file, 'w') as f:
+                f.write("=== The Artificer - Startup Error ===\n\n")
+                f.write(f"Error: {str(e)}\n\n")
+                f.write(f"Python version: {sys.version}\n")
+                f.write(f"Frozen: {getattr(sys, 'frozen', False)}\n")
+                f.write(f"Executable: {sys.executable}\n\n")
+                f.write(f"Traceback:\n{error_details}")
+
+            # Show messagebox with log location
+            try:
+                from tkinter import Tk, messagebox
+                root = Tk()
+                root.withdraw()
+                messagebox.showerror(
+                    "Startup Error",
+                    f"The application failed to start.\n\n"
+                    f"Error: {str(e)}\n\n"
+                    f"Full error log saved to:\n{log_file}"
+                )
+                root.destroy()
+            except:
+                pass  # If even messagebox fails, just write to console
+        except:
+            pass  # If file writing fails, fall through to console output
+
+        # Always print to console (will show if console=True in spec)
+        print("\n" + "="*50)
+        print("STARTUP ERROR")
+        print("="*50)
+        print(error_details)
+        print("="*50)
+        input("Press Enter to exit...")
+        sys.exit(1)
 
 
 if __name__ == "__main__":
