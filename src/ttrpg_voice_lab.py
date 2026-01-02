@@ -580,7 +580,7 @@ class TTRPGVoiceLab(ctk.CTk):
         # Right sidebar for voice models
         self.voice_sidebar = ctk.CTkFrame(self, width=250, corner_radius=0)
         self.voice_sidebar.grid(row=0, column=2, rowspan=2, sticky="nsew")
-        self.voice_sidebar.grid_rowconfigure(4, weight=1)
+        self.voice_sidebar.grid_rowconfigure(6, weight=1)  # Empty row at bottom expands
 
         # Voice sidebar title
         voice_sidebar_title = ctk.CTkLabel(
