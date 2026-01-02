@@ -281,6 +281,17 @@ VOICE_CATALOG = [
         "quality": "medium",
         "size_mb": 51,
         "sample_url": "https://rhasspy.github.io/piper-samples/samples/sv/sv_SE/nst/medium/speaker_0.mp3"
+    },
+    # Danish voices
+    {
+        "id": "da_DK-talesyntese-medium",
+        "name": "Danish - Male",
+        "description": "Danish male voice. Perfect for: Nordic campaigns, Scandinavian NPCs, Danish characters",
+        "language": "da/da_DK",
+        "voice": "talesyntese",
+        "quality": "medium",
+        "size_mb": 51,
+        "sample_url": "https://rhasspy.github.io/piper-samples/samples/da/da_DK/talesyntese/medium/speaker_0.mp3"
     }
 ]
 
