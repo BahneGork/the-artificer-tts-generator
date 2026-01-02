@@ -201,6 +201,10 @@ class TTRPGVoiceLab(ctk.CTk):
         # Build UI
         self.build_ui()
 
+        # Force window to render and update layout
+        self.update_idletasks()
+        self.deiconify()  # Ensure window is visible
+
         # Check for Piper model
         self.check_piper_model()
 
