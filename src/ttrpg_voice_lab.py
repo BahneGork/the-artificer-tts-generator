@@ -188,9 +188,8 @@ class TTRPGVoiceLab(ctk.CTk):
         )
         self.voice_selector.grid(row=0, column=1, padx=10, pady=10, sticky="ew")
 
-        # Populate voice models
+        # Populate voice models (moved to after status_label creation)
         self.voice_models = {}  # Dictionary: display_name -> model_path
-        self.load_voice_models()
 
         # Text input area
         self.text_frame = ctk.CTkFrame(self.main_frame)
@@ -484,6 +483,9 @@ class TTRPGVoiceLab(ctk.CTk):
             font=ctk.CTkFont(size=12)
         )
         self.status_label.grid(row=7, column=0, padx=20, pady=(0, 10))
+
+        # Load voice models after status_label is created
+        self.load_voice_models()
 
     def update_speech_rate_label(self, value):
         """Update speech rate slider label"""
