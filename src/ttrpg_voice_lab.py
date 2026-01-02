@@ -153,8 +153,8 @@ class TTRPGVoiceLab(ctk.CTk):
 
         # Window configuration
         self.title("The Artificer - TTS Voice Generator")
-        self.geometry("1000x700")
-        self.minsize(1000, 700)  # Set minimum window size
+        self.geometry("1280x700")
+        self.minsize(1280, 700)  # Set minimum window size
 
         # Initialize pygame mixer for audio playback (if available)
         if PYGAME_AVAILABLE:
@@ -206,7 +206,7 @@ class TTRPGVoiceLab(ctk.CTk):
         self.update()  # Full update instead of just idletasks
 
         # Force geometry recalculation
-        self.geometry("1000x700")
+        self.geometry("1280x700")
         self.update_idletasks()
 
         # Check for Piper model
@@ -231,8 +231,10 @@ class TTRPGVoiceLab(ctk.CTk):
 
     def build_ui(self):
         """Build the main user interface"""
-        # Configure grid layout
-        self.grid_columnconfigure(1, weight=1)
+        # Configure grid layout - 3 columns: left sidebar, main content, right sidebar
+        self.grid_columnconfigure(0, weight=0)  # Left sidebar - fixed width
+        self.grid_columnconfigure(1, weight=1)  # Main content - expands
+        self.grid_columnconfigure(2, weight=0)  # Right sidebar - fixed width
         self.grid_rowconfigure(0, weight=1)
 
         # Left sidebar for presets
@@ -282,43 +284,9 @@ class TTRPGVoiceLab(ctk.CTk):
         )
         self.preset_label.grid(row=1, column=0, padx=20, pady=(0, 10))
 
-        # Voice/Language selector frame
-        self.voice_frame = ctk.CTkFrame(self.main_frame)
-        self.voice_frame.grid(row=2, column=0, padx=20, pady=(0, 10), sticky="ew")
-        self.voice_frame.grid_columnconfigure(1, weight=1)
-        self.voice_frame.grid_columnconfigure(2, weight=0)  # Configure column for button
-
-        ctk.CTkLabel(
-            self.voice_frame,
-            text="Voice Model:",
-            font=ctk.CTkFont(size=12, weight="bold")
-        ).grid(row=0, column=0, padx=10, pady=10, sticky="w")
-
-        self.voice_selector = ctk.CTkComboBox(
-            self.voice_frame,
-            values=["No models found"],
-            command=self.on_voice_selected,
-            state="readonly"
-        )
-        self.voice_selector.grid(row=0, column=1, padx=10, pady=10, sticky="ew")
-
-        # Download Voices button
-        self.download_voices_btn = ctk.CTkButton(
-            self.voice_frame,
-            text="Download Voices",
-            command=self.open_voice_downloader,
-            width=140,
-            fg_color="#1f538d",
-            hover_color="#14375e"
-        )
-        self.download_voices_btn.grid(row=0, column=2, padx=10, pady=10)
-
-        # Populate voice models (moved to after status_label creation)
-        self.voice_models = {}  # Dictionary: display_name -> model_path
-
         # Text input area
         self.text_frame = ctk.CTkFrame(self.main_frame)
-        self.text_frame.grid(row=3, column=0, padx=20, pady=10, sticky="nsew")
+        self.text_frame.grid(row=2, column=0, padx=20, pady=10, sticky="nsew")
         self.text_frame.grid_columnconfigure(0, weight=1)
         self.text_frame.grid_rowconfigure(1, weight=1)
 
@@ -608,6 +576,49 @@ class TTRPGVoiceLab(ctk.CTk):
             font=ctk.CTkFont(size=12)
         )
         self.status_label.grid(row=7, column=0, padx=20, pady=(0, 10))
+
+        # Right sidebar for voice models
+        self.voice_sidebar = ctk.CTkFrame(self, width=250, corner_radius=0)
+        self.voice_sidebar.grid(row=0, column=2, rowspan=2, sticky="nsew")
+        self.voice_sidebar.grid_rowconfigure(4, weight=1)
+
+        # Voice sidebar title
+        voice_sidebar_title = ctk.CTkLabel(
+            self.voice_sidebar,
+            text="Voice Models",
+            font=ctk.CTkFont(size=20, weight="bold")
+        )
+        voice_sidebar_title.grid(row=0, column=0, padx=20, pady=(20, 10))
+
+        # Voice Model label
+        ctk.CTkLabel(
+            self.voice_sidebar,
+            text="Select Voice:",
+            font=ctk.CTkFont(size=12, weight="bold")
+        ).grid(row=1, column=0, padx=20, pady=(10, 5), sticky="w")
+
+        # Voice selector dropdown
+        self.voice_selector = ctk.CTkComboBox(
+            self.voice_sidebar,
+            values=["No models found"],
+            command=self.on_voice_selected,
+            state="readonly"
+        )
+        self.voice_selector.grid(row=2, column=0, padx=20, pady=(0, 10), sticky="ew")
+
+        # Download Voices button
+        self.download_voices_btn = ctk.CTkButton(
+            self.voice_sidebar,
+            text="Download Voices",
+            command=self.open_voice_downloader,
+            height=40,
+            fg_color="#1f538d",
+            hover_color="#14375e"
+        )
+        self.download_voices_btn.grid(row=3, column=0, padx=20, pady=10, sticky="ew")
+
+        # Populate voice models (moved to after status_label creation)
+        self.voice_models = {}  # Dictionary: display_name -> model_path
 
         # Load voice models after status_label is created
         self.load_voice_models()
