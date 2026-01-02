@@ -617,6 +617,24 @@ class TTRPGVoiceLab(ctk.CTk):
         )
         self.download_voices_btn.grid(row=3, column=0, padx=20, pady=10, sticky="ew")
 
+        # Voice description label
+        ctk.CTkLabel(
+            self.voice_sidebar,
+            text="About This Voice:",
+            font=ctk.CTkFont(size=12, weight="bold")
+        ).grid(row=4, column=0, padx=20, pady=(10, 5), sticky="w")
+
+        # Voice description text (wrapped)
+        self.voice_description_label = ctk.CTkLabel(
+            self.voice_sidebar,
+            text="Select a voice to see description",
+            font=ctk.CTkFont(size=11),
+            wraplength=210,
+            anchor="w",
+            justify="left"
+        )
+        self.voice_description_label.grid(row=5, column=0, padx=20, pady=(0, 10), sticky="nw")
+
         # Populate voice models (moved to after status_label creation)
         self.voice_models = {}  # Dictionary: display_name -> model_path
 
@@ -711,10 +729,26 @@ class TTRPGVoiceLab(ctk.CTk):
             self.voice_selector.set(voice_names[0])  # Select first voice
             self.status_label.configure(text=f"Loaded {len(voice_names)} voice model(s)")
 
+            # Update description for first voice
+            self.on_voice_selected(voice_names[0])
+
     def on_voice_selected(self, choice):
         """Handle voice model selection"""
         if choice in self.voice_models:
             self.status_label.configure(text=f"Selected: {choice}")
+
+            # Update voice description
+            model_path = self.voice_models[choice]
+            model_filename = Path(model_path).stem  # Get filename without extension
+
+            # Find matching voice in catalog
+            description = "No description available"
+            for voice in VOICE_CATALOG:
+                if voice['id'] == model_filename:
+                    description = voice['description']
+                    break
+
+            self.voice_description_label.configure(text=description)
 
     def open_voice_downloader(self):
         """Open the voice downloader dialog"""
