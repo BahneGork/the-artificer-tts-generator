@@ -104,19 +104,19 @@
     },
     {
       "name": "Lich",
-      "description": "Ancient undead spellcaster with hollow, otherworldly resonance",
+      "description": "Ancient undead spellcaster with hollow echo",
       "effects": {
-        "speech_rate": 0.7,
-        "pitch_shift": -5,
-        "distortion_drive": 8,
-        "ring_modulator_freq": 15,
-        "volume_boost": 6,
-        "reverb_room_size": 0.9,
-        "reverb_wetness": 0.8,
-        "chorus_depth": 0.85,
-        "delay_time_ms": 200,
-        "lowpass_cutoff": 3500,
-        "highpass_cutoff": 80
+        "speech_rate": 0.8,
+        "pitch_shift": -3,
+        "distortion_drive": 3,
+        "ring_modulator_freq": 0,
+        "volume_boost": 5,
+        "reverb_room_size": 0.85,
+        "reverb_wetness": 0.7,
+        "chorus_depth": 0.6,
+        "delay_time_ms": 150,
+        "lowpass_cutoff": 8000,
+        "highpass_cutoff": 50
       }
     },
     {
