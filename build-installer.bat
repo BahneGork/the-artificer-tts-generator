@@ -45,8 +45,34 @@ if exist docs (
     echo   - Documentation copied
 )
 
+REM Bundle source code for GPL compliance
+echo   - Bundling source code for GPL compliance...
+if not exist dist\TTRPGVoiceLab\source mkdir dist\TTRPGVoiceLab\source
+
+REM Copy Python source files
+xcopy src dist\TTRPGVoiceLab\source\src\ /E /I /Y >nul
+
+REM Copy preset configurations
+xcopy presets dist\TTRPGVoiceLab\source\presets\ /E /I /Y >nul
+
+REM Copy license and documentation to source folder
+copy LICENSE dist\TTRPGVoiceLab\source\ >nul 2>&1
+copy THIRD_PARTY_LICENSES.txt dist\TTRPGVoiceLab\source\ >nul 2>&1
+copy README.md dist\TTRPGVoiceLab\source\ >nul 2>&1
+copy SOURCE_README.txt dist\TTRPGVoiceLab\source\ >nul 2>&1
+copy requirements.txt dist\TTRPGVoiceLab\source\ >nul 2>&1
+
+REM Copy build scripts
+copy build.bat dist\TTRPGVoiceLab\source\ >nul 2>&1
+copy build-installer.bat dist\TTRPGVoiceLab\source\ >nul 2>&1
+copy ttrpg_voice_lab.spec dist\TTRPGVoiceLab\source\ >nul 2>&1
+copy installer.iss dist\TTRPGVoiceLab\source\ >nul 2>&1
+
+REM Copy top-level license files for easy access
 copy LICENSE dist\TTRPGVoiceLab\ >nul 2>&1
-copy README.md dist\TTRPGVoiceLab\ >nul 2>&1
+copy THIRD_PARTY_LICENSES.txt dist\TTRPGVoiceLab\ >nul 2>&1
+copy SOURCE_README.txt dist\TTRPGVoiceLab\ >nul 2>&1
+echo   - Source code bundled
 echo.
 
 REM Step 4: Check for Inno Setup and build installer
