@@ -1,7 +1,25 @@
 #!/usr/bin/env python3
 """
-The Artificer - TTS Generator
+The Artificer - TTS Voice Generator
+
 A desktop application for generating and processing NPC voices for TTRPG content.
+
+Copyright (C) 2025 Michael (BahneGork)
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+Source code: https://github.com/BahneGork/the-artificer-tts-generator
 """
 
 import os
@@ -786,6 +804,17 @@ class TTRPGVoiceLab(ctk.CTk):
         )
         self.voice_description_label.grid(row=5, column=0, padx=20, pady=(0, 10), sticky="nw")
 
+        # About / License button
+        self.about_btn = ctk.CTkButton(
+            self.voice_sidebar,
+            text="About / License",
+            command=self.show_about_dialog,
+            height=35,
+            fg_color="gray30",
+            hover_color="gray20"
+        )
+        self.about_btn.grid(row=7, column=0, padx=20, pady=(20, 20), sticky="ew")
+
         # Populate voice models (moved to after status_label creation)
         self.voice_models = {}  # Dictionary: display_name -> model_path
 
@@ -908,6 +937,119 @@ class TTRPGVoiceLab(ctk.CTk):
 
         # Refresh voice models after dialog closes
         self.load_voice_models()
+
+    def show_about_dialog(self):
+        """Show About/License dialog"""
+        dialog = ctk.CTkToplevel(self)
+        dialog.title("About - The Artificer")
+        dialog.geometry("600x500")
+        dialog.resizable(False, False)
+
+        # Make dialog modal
+        dialog.transient(self)
+        dialog.grab_set()
+
+        # Configure grid
+        dialog.grid_columnconfigure(0, weight=1)
+        dialog.grid_rowconfigure(1, weight=1)
+
+        # Header frame
+        header_frame = ctk.CTkFrame(dialog, fg_color="transparent")
+        header_frame.grid(row=0, column=0, padx=20, pady=20, sticky="ew")
+
+        # App title
+        title = ctk.CTkLabel(
+            header_frame,
+            text="The Artificer - TTS Voice Generator",
+            font=ctk.CTkFont(size=18, weight="bold")
+        )
+        title.pack(pady=(0, 5))
+
+        # Version
+        version = ctk.CTkLabel(
+            header_frame,
+            text="Version 1.0.0",
+            font=ctk.CTkFont(size=12)
+        )
+        version.pack(pady=(0, 10))
+
+        # Copyright
+        copyright_text = ctk.CTkLabel(
+            header_frame,
+            text="Copyright © 2025 Michael (BahneGork)",
+            font=ctk.CTkFont(size=11)
+        )
+        copyright_text.pack()
+
+        # License info frame with scrollable text
+        info_frame = ctk.CTkFrame(dialog)
+        info_frame.grid(row=1, column=0, padx=20, pady=(0, 20), sticky="nsew")
+        info_frame.grid_columnconfigure(0, weight=1)
+        info_frame.grid_rowconfigure(0, weight=1)
+
+        # Create scrollable text widget
+        license_text = ctk.CTkTextbox(info_frame, wrap="word", font=ctk.CTkFont(size=11))
+        license_text.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
+
+        # License content
+        content = """LICENSE
+
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with this program in the LICENSE file. If not, see <https://www.gnu.org/licenses/>.
+
+SOURCE CODE
+
+The complete source code is available at:
+https://github.com/BahneGork/the-artificer-tts-generator
+
+THIRD-PARTY COMPONENTS
+
+This application uses the following open-source libraries:
+
+• Pedalboard (Spotify AB) - GPL v3
+• Piper TTS (Rhasspy) - MIT (with GPL espeak-ng)
+• CustomTkinter (Tom Schimansky) - MIT
+• Pydub - MIT
+• NumPy - BSD 3-Clause
+• PyInstaller - GPL v2 with exceptions
+• audioop-lts - PSF License
+
+Due to GPL v3 components, this entire application is licensed under GPL v3.
+
+See THIRD_PARTY_LICENSES.txt for complete attribution and license details.
+
+VOICE MODELS
+
+Voice models are downloaded separately from HuggingFace (rhasspy/piper-voices). Each voice model has its own license. Users should review individual voice model licenses before commercial use.
+
+Voice models are NOT distributed with this application.
+"""
+
+        license_text.insert("1.0", content)
+        license_text.configure(state="disabled")  # Make read-only
+
+        # Close button
+        close_btn = ctk.CTkButton(
+            dialog,
+            text="Close",
+            command=dialog.destroy,
+            width=100,
+            height=32
+        )
+        close_btn.grid(row=2, column=0, pady=(0, 20))
+
+        # Center dialog on parent
+        dialog.update_idletasks()
+        x = self.winfo_x() + (self.winfo_width() - dialog.winfo_width()) // 2
+        y = self.winfo_y() + (self.winfo_height() - dialog.winfo_height()) // 2
+        dialog.geometry(f"+{x}+{y}")
+
+        # Bring to front
+        dialog.lift()
+        dialog.focus_force()
 
     def load_preset(self, preset: Dict[str, Any]):
         """Load a voice preset and update UI"""

@@ -1,0 +1,120 @@
+THIRD-PARTY SOFTWARE LICENSES
+================================================================================
+
+The Artificer - TTS Voice Generator uses the following third-party libraries:
+
+================================================================================
+1. Pedalboard
+================================================================================
+Copyright (C) 2021-2025 Spotify AB
+Licensed under: GNU General Public License v3.0
+
+Pedalboard is Spotify's audio effects library for Python.
+Source: https://github.com/spotify/pedalboard
+License: https://github.com/spotify/pedalboard/blob/master/LICENSE
+
+This is a GPL v3 component, which makes the entire application GPL v3.
+
+================================================================================
+2. Piper TTS
+================================================================================
+Copyright (C) Rhasspy
+Licensed under: MIT License
+
+Piper is a fast, local neural text-to-speech system.
+Source: https://github.com/rhasspy/piper
+License: https://github.com/rhasspy/piper/blob/master/LICENSE.md
+
+Note: Piper uses espeak-ng for phonemization, which is GPL licensed.
+
+================================================================================
+3. CustomTkinter
+================================================================================
+Copyright (C) 2023 Tom Schimansky
+Licensed under: MIT License
+
+CustomTkinter is a modern and customizable Python UI library based on Tkinter.
+Source: https://github.com/TomSchimansky/CustomTkinter
+License: https://github.com/TomSchimansky/CustomTkinter/blob/master/LICENSE
+
+================================================================================
+4. Pydub
+================================================================================
+Licensed under: MIT License
+
+Pydub is a simple audio manipulation library.
+Source: https://github.com/jiaaro/pydub
+License: MIT
+
+================================================================================
+5. NumPy
+================================================================================
+Copyright (C) 2005-2024 NumPy Developers
+Licensed under: BSD 3-Clause License
+
+NumPy is the fundamental package for array computing with Python.
+Source: https://github.com/numpy/numpy
+License: https://github.com/numpy/numpy/blob/main/LICENSE.txt
+
+================================================================================
+6. PyInstaller
+================================================================================
+Copyright (C) 2005-2024 PyInstaller Development Team
+Licensed under: GNU General Public License v2.0 with exceptions
+
+PyInstaller bundles Python applications into standalone executables.
+Source: https://github.com/pyinstaller/pyinstaller
+License: https://github.com/pyinstaller/pyinstaller/blob/develop/COPYING.txt
+
+Note: PyInstaller has a special exception allowing distribution of bundled
+applications without imposing GPL on the bundled code itself.
+
+================================================================================
+7. audioop-lts
+================================================================================
+Licensed under: Python Software Foundation License
+
+Python audio operations replacement for Python 3.13+
+Source: https://github.com/AbstractUmbra/audioop-lts
+License: PSF License
+
+================================================================================
+8. Pygame (Optional)
+================================================================================
+Licensed under: GNU Lesser General Public License (LGPL) v2.1
+
+Pygame is a cross-platform set of Python modules for multimedia applications.
+Source: https://github.com/pygame/pygame
+License: https://github.com/pygame/pygame/blob/main/docs/LGPL.txt
+
+Note: Pygame is optional and only used for audio preview playback.
+
+================================================================================
+VOICE MODELS
+================================================================================
+
+Voice models are downloaded separately from HuggingFace (rhasspy/piper-voices).
+Each voice model has its own license specified in its MODEL_CARD file.
+
+Voice models are NOT distributed with this application. Users download them
+directly from: https://huggingface.co/rhasspy/piper-voices
+
+Common voice model licenses include:
+- CC0 (Public Domain)
+- CC BY 4.0 (Attribution required)
+- MIT License
+- Specific research-only licenses
+
+Users should review individual voice model licenses before commercial use.
+
+================================================================================
+OVERALL LICENSE
+================================================================================
+
+Due to the inclusion of GPL v3 licensed components (Pedalboard, espeak-ng),
+this entire application is licensed under GNU General Public License v3.0.
+
+See LICENSE file for full GPL v3 text.
+Source code: https://github.com/BahneGork/the-artificer-tts-generator
+
+================================================================================

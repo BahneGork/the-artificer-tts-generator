@@ -4,7 +4,7 @@
 
 ![Status](https://img.shields.io/badge/status-beta-yellow)
 ![Python](https://img.shields.io/badge/python-3.8+-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
+![License](https://img.shields.io/badge/license-GPL%20v3-blue)
 
 ## Overview
 
@@ -232,13 +232,50 @@ Contributions are welcome! Areas for enhancement:
 
 ## License
 
-MIT License (to be confirmed)
+Copyright © 2025 Michael (BahneGork)
+
+This program is free software: you can redistribute it and/or modify it under the terms of the **GNU General Public License v3.0** as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but **WITHOUT ANY WARRANTY**; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with this program in the [LICENSE](LICENSE) file. If not, see https://www.gnu.org/licenses/.
+
+### Why GPL v3?
+
+This application uses [Pedalboard](https://github.com/spotify/pedalboard) (GPL v3) and Piper's espeak-ng phonemizer (GPL), which require the entire application to be licensed under GPL v3 due to copyleft requirements.
+
+### Commercial Use
+
+✅ **You CAN sell this software commercially**
+✅ **You CAN charge for distribution or support**
+⚠️ **You MUST provide source code to recipients**
+⚠️ **You MUST include GPL v3 license and attribution**
+
+The GPL v3 license allows commercial use, but requires that recipients have access to the source code.
+
+### Third-Party Licenses
+
+This application uses the following open-source libraries:
+
+- **Pedalboard** (Spotify AB) - GPL v3 ⚖️
+- **Piper TTS** (Rhasspy) - MIT (with GPL espeak-ng)
+- **CustomTkinter** (Tom Schimansky) - MIT
+- **Pydub** - MIT
+- **NumPy** - BSD 3-Clause
+- **PyInstaller** - GPL v2 with exceptions
+- **audioop-lts** - PSF License
+
+See [THIRD_PARTY_LICENSES.txt](THIRD_PARTY_LICENSES.txt) for complete license text and attribution.
+
+### Voice Models
+
+Voice models are downloaded separately from [HuggingFace](https://huggingface.co/rhasspy/piper-voices) and are **NOT** distributed with this application. Each voice model has its own license (typically CC0, CC BY 4.0, or MIT). Users should review individual voice model licenses before commercial use.
 
 ## Credits
 
 Built with:
 - [Piper TTS](https://github.com/rhasspy/piper) by Rhasspy
-- [Pedalboard](https://github.com/spotify/pedalboard) by Spotify
+- [Pedalboard](https://github.com/spotify/pedalboard) by Spotify (GPL v3)
 - [CustomTkinter](https://github.com/TomSchimansky/CustomTkinter) by Tom Schimansky
 
 ## Acknowledgments
