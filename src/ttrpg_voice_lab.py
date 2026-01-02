@@ -40,6 +40,111 @@ ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("blue")
 
 
+# Voice Model Catalog - Curated list for TTRPG characters
+VOICE_CATALOG = [
+    {
+        "id": "en_US-hfc_male-medium",
+        "name": "English (US) - Deep Male",
+        "description": "Deep, authoritative voice. Perfect for: Dragons, Giants, Warriors, Villains",
+        "language": "en/en_US",
+        "voice": "hfc_male",
+        "quality": "medium",
+        "size_mb": 63,
+        "sample_url": "https://rhasspy.github.io/piper-samples/samples/en/en_US/hfc_male/medium/speaker_0.mp3"
+    },
+    {
+        "id": "en_US-joe-medium",
+        "name": "English (US) - Gruff Male",
+        "description": "Rough, masculine voice. Perfect for: Guards, Bandits, Orcs, Dwarves",
+        "language": "en/en_US",
+        "voice": "joe",
+        "quality": "medium",
+        "size_mb": 63,
+        "sample_url": "https://rhasspy.github.io/piper-samples/samples/en/en_US/joe/medium/speaker_0.mp3"
+    },
+    {
+        "id": "en_GB-alan-medium",
+        "name": "English (UK) - British Male",
+        "description": "Refined British accent. Perfect for: Nobles, Wizards, Scholars, Vampires",
+        "language": "en/en_GB",
+        "voice": "alan",
+        "quality": "medium",
+        "size_mb": 51,
+        "sample_url": "https://rhasspy.github.io/piper-samples/samples/en/en_GB/alan/medium/speaker_0.mp3"
+    },
+    {
+        "id": "en_US-amy-medium",
+        "name": "English (US) - Female",
+        "description": "Clear female voice. Perfect for: Queens, Clerics, Female NPCs, Elves",
+        "language": "en/en_US",
+        "voice": "amy",
+        "quality": "medium",
+        "size_mb": 63,
+        "sample_url": "https://rhasspy.github.io/piper-samples/samples/en/en_US/amy/medium/speaker_0.mp3"
+    },
+    {
+        "id": "en_US-lessac-medium",
+        "name": "English (US) - Neutral Female (Default)",
+        "description": "Balanced, clear voice. Perfect for: General NPCs, Narration",
+        "language": "en/en_US",
+        "voice": "lessac",
+        "quality": "medium",
+        "size_mb": 51,
+        "sample_url": "https://rhasspy.github.io/piper-samples/samples/en/en_US/lessac/medium/speaker_0.mp3"
+    },
+    {
+        "id": "en_US-ryan-high",
+        "name": "English (US) - Young Male",
+        "description": "Higher-pitched male. Perfect for: Young NPCs, Halflings, with effects for Goblins",
+        "language": "en/en_US",
+        "voice": "ryan",
+        "quality": "high",
+        "size_mb": 112,
+        "sample_url": "https://rhasspy.github.io/piper-samples/samples/en/en_US/ryan/high/speaker_0.mp3"
+    },
+    {
+        "id": "en_US-libritts-high",
+        "name": "English (US) - Multi-Speaker (Best Quality)",
+        "description": "Highest quality, natural speech. Perfect for: Important NPCs, Player Characters",
+        "language": "en/en_US",
+        "voice": "libritts",
+        "quality": "high",
+        "size_mb": 182,
+        "sample_url": "https://rhasspy.github.io/piper-samples/samples/en/en_US/libritts/high/speaker_0.mp3"
+    },
+    {
+        "id": "en_US-hfc_female-medium",
+        "name": "English (US) - Mature Female",
+        "description": "Deeper female voice. Perfect for: Hags, Witches, Matriarchs, Authority Figures",
+        "language": "en/en_US",
+        "voice": "hfc_female",
+        "quality": "medium",
+        "size_mb": 63,
+        "sample_url": "https://rhasspy.github.io/piper-samples/samples/en/en_US/hfc_female/medium/speaker_0.mp3"
+    },
+    {
+        "id": "en_US-ljspeech-medium",
+        "name": "English (US) - Soft Female",
+        "description": "Gentle, pleasant voice. Perfect for: Healers, Fairies, Kind NPCs",
+        "language": "en/en_US",
+        "voice": "ljspeech",
+        "quality": "medium",
+        "size_mb": 63,
+        "sample_url": "https://rhasspy.github.io/piper-samples/samples/en/en_US/ljspeech/medium/speaker_0.mp3"
+    },
+    {
+        "id": "en_GB-northern_english_male-medium",
+        "name": "English (UK) - Northern Male",
+        "description": "Northern English accent. Perfect for: Commoners, Tavern Keepers, Workers",
+        "language": "en/en_GB",
+        "voice": "northern_english_male",
+        "quality": "medium",
+        "size_mb": 51,
+        "sample_url": "https://rhasspy.github.io/piper-samples/samples/en/en_GB/northern_english_male/medium/speaker_0.mp3"
+    }
+]
+
+
 class TTRPGVoiceLab(ctk.CTk):
     """Main application class for TTRPG Voice Lab"""
 
@@ -187,6 +292,17 @@ class TTRPGVoiceLab(ctk.CTk):
             state="readonly"
         )
         self.voice_selector.grid(row=0, column=1, padx=10, pady=10, sticky="ew")
+
+        # Download Voices button
+        self.download_voices_btn = ctk.CTkButton(
+            self.voice_frame,
+            text="Download Voices",
+            command=self.open_voice_downloader,
+            width=140,
+            fg_color="#1f538d",
+            hover_color="#14375e"
+        )
+        self.download_voices_btn.grid(row=0, column=2, padx=10, pady=10)
 
         # Populate voice models (moved to after status_label creation)
         self.voice_models = {}  # Dictionary: display_name -> model_path
@@ -579,6 +695,14 @@ class TTRPGVoiceLab(ctk.CTk):
         """Handle voice model selection"""
         if choice in self.voice_models:
             self.status_label.configure(text=f"Selected: {choice}")
+
+    def open_voice_downloader(self):
+        """Open the voice downloader dialog"""
+        dialog = VoiceDownloaderDialog(self, self.models_dir)
+        dialog.wait_window()  # Wait for dialog to close
+
+        # Refresh voice models after dialog closes
+        self.load_voice_models()
 
     def load_preset(self, preset: Dict[str, Any]):
         """Load a voice preset and update UI"""
@@ -976,6 +1100,267 @@ class TTRPGVoiceLab(ctk.CTk):
             pygame.mixer.quit()
         self.cleanup_temp_files()
         self.destroy()
+
+
+class VoiceDownloaderDialog(ctk.CTkToplevel):
+    """Dialog for browsing and downloading voice models"""
+
+    def __init__(self, parent, models_dir):
+        super().__init__(parent)
+
+        self.models_dir = models_dir
+        self.voice_checkboxes = {}
+        self.selected_voices = []
+        self.is_downloading = False
+
+        # Window configuration
+        self.title("Download Voice Models")
+        self.geometry("800x600")
+        self.resizable(False, False)
+
+        # Make dialog modal
+        self.transient(parent)
+        self.grab_set()
+
+        # Build UI
+        self.build_ui()
+
+        # Check which voices are already installed
+        self.update_installed_voices()
+
+    def build_ui(self):
+        """Build the dialog UI"""
+        # Main frame
+        main_frame = ctk.CTkFrame(self)
+        main_frame.pack(fill="both", expand=True, padx=20, pady=20)
+
+        # Title
+        title_label = ctk.CTkLabel(
+            main_frame,
+            text="Download Voice Models",
+            font=ctk.CTkFont(size=20, weight="bold")
+        )
+        title_label.pack(pady=(0, 10))
+
+        # Info label
+        info_label = ctk.CTkLabel(
+            main_frame,
+            text="Select voices to download. Click on voice name to hear a sample.",
+            font=ctk.CTkFont(size=12)
+        )
+        info_label.pack(pady=(0, 10))
+
+        # Scrollable frame for voice list
+        self.scroll_frame = ctk.CTkScrollableFrame(
+            main_frame,
+            width=740,
+            height=400
+        )
+        self.scroll_frame.pack(pady=(0, 10), fill="both", expand=True)
+
+        # Populate voice list
+        for voice in VOICE_CATALOG:
+            self.create_voice_item(voice)
+
+        # Button frame
+        button_frame = ctk.CTkFrame(main_frame)
+        button_frame.pack(fill="x", pady=(10, 0))
+
+        # Download button
+        self.download_btn = ctk.CTkButton(
+            button_frame,
+            text="Download Selected",
+            command=self.download_selected,
+            fg_color="green",
+            hover_color="darkgreen",
+            width=150
+        )
+        self.download_btn.pack(side="left", padx=5)
+
+        # Close button
+        close_btn = ctk.CTkButton(
+            button_frame,
+            text="Close",
+            command=self.destroy,
+            width=150
+        )
+        close_btn.pack(side="right", padx=5)
+
+        # Progress label
+        self.progress_label = ctk.CTkLabel(
+            button_frame,
+            text="",
+            font=ctk.CTkFont(size=12)
+        )
+        self.progress_label.pack(side="left", padx=20)
+
+    def create_voice_item(self, voice):
+        """Create a voice item in the list"""
+        # Frame for this voice
+        voice_frame = ctk.CTkFrame(self.scroll_frame)
+        voice_frame.pack(fill="x", pady=5, padx=5)
+        voice_frame.grid_columnconfigure(1, weight=1)
+
+        # Checkbox
+        var = ctk.BooleanVar()
+        checkbox = ctk.CTkCheckBox(
+            voice_frame,
+            text="",
+            variable=var,
+            width=30
+        )
+        checkbox.grid(row=0, column=0, padx=5, pady=5, rowspan=2)
+        self.voice_checkboxes[voice['id']] = {'var': var, 'frame': voice_frame, 'voice': voice}
+
+        # Voice name (clickable for sample)
+        name_label = ctk.CTkLabel(
+            voice_frame,
+            text=voice['name'],
+            font=ctk.CTkFont(size=14, weight="bold"),
+            cursor="hand2",
+            text_color="#3b8ed0"
+        )
+        name_label.grid(row=0, column=1, sticky="w", padx=5)
+        name_label.bind("<Button-1>", lambda e, url=voice['sample_url']: self.open_sample(url))
+
+        # Description
+        desc_label = ctk.CTkLabel(
+            voice_frame,
+            text=voice['description'],
+            font=ctk.CTkFont(size=11),
+            anchor="w"
+        )
+        desc_label.grid(row=1, column=1, sticky="w", padx=5)
+
+        # Size
+        size_label = ctk.CTkLabel(
+            voice_frame,
+            text=f"{voice['size_mb']} MB",
+            font=ctk.CTkFont(size=11),
+            width=80
+        )
+        size_label.grid(row=0, column=2, padx=5, pady=5, rowspan=2)
+
+        # Status label (will show "Installed" or download progress)
+        status_label = ctk.CTkLabel(
+            voice_frame,
+            text="",
+            font=ctk.CTkFont(size=11),
+            width=100
+        )
+        status_label.grid(row=0, column=3, padx=5, pady=5, rowspan=2)
+        self.voice_checkboxes[voice['id']]['status_label'] = status_label
+
+    def update_installed_voices(self):
+        """Check and mark which voices are already installed"""
+        if not self.models_dir.exists():
+            return
+
+        for voice_id, voice_data in self.voice_checkboxes.items():
+            model_file = self.models_dir / f"{voice_id}.onnx"
+            if model_file.exists():
+                voice_data['status_label'].configure(text="✓ Installed", text_color="green")
+                voice_data['var'].set(False)  # Uncheck installed voices
+                voice_data['frame'].configure(fg_color="#1a4d2e")  # Darker green tint
+
+    def open_sample(self, url):
+        """Open voice sample in browser"""
+        import webbrowser
+        webbrowser.open(url)
+
+    def download_selected(self):
+        """Download selected voices"""
+        if self.is_downloading:
+            return
+
+        # Get selected voices
+        selected = [
+            voice_data['voice']
+            for voice_id, voice_data in self.voice_checkboxes.items()
+            if voice_data['var'].get()
+        ]
+
+        if not selected:
+            messagebox.showinfo("No Selection", "Please select at least one voice to download.")
+            return
+
+        # Calculate total size
+        total_mb = sum(v['size_mb'] for v in selected)
+        result = messagebox.askyesno(
+            "Confirm Download",
+            f"Download {len(selected)} voice model(s)?\n\nTotal size: {total_mb} MB"
+        )
+
+        if not result:
+            return
+
+        # Disable download button
+        self.is_downloading = True
+        self.download_btn.configure(state="disabled", text="Downloading...")
+
+        # Start download in background thread
+        download_thread = threading.Thread(
+            target=self.download_voices_thread,
+            args=(selected,),
+            daemon=True
+        )
+        download_thread.start()
+
+    def download_voices_thread(self, voices):
+        """Download voices in background thread"""
+        import urllib.request
+
+        self.models_dir.mkdir(exist_ok=True)
+
+        for idx, voice in enumerate(voices, 1):
+            try:
+                # Update progress label
+                self.after(0, lambda: self.progress_label.configure(
+                    text=f"Downloading {idx}/{len(voices)}: {voice['name']}"
+                ))
+
+                # Update voice status
+                voice_id = voice['id']
+                self.after(0, lambda vid=voice_id: self.voice_checkboxes[vid]['status_label'].configure(
+                    text="Downloading...", text_color="orange"
+                ))
+
+                # Build download URLs
+                base_url = f"https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/{voice['language']}/{voice['voice']}/{voice['quality']}"
+
+                # Download .onnx file
+                onnx_url = f"{base_url}/{voice['id']}.onnx"
+                onnx_path = self.models_dir / f"{voice['id']}.onnx"
+                urllib.request.urlretrieve(onnx_url, onnx_path)
+
+                # Download .onnx.json file
+                json_url = f"{base_url}/{voice['id']}.onnx.json"
+                json_path = self.models_dir / f"{voice['id']}.onnx.json"
+                urllib.request.urlretrieve(json_url, json_path)
+
+                # Mark as complete
+                self.after(0, lambda vid=voice_id: self.voice_checkboxes[vid]['status_label'].configure(
+                    text="✓ Installed", text_color="green"
+                ))
+                self.after(0, lambda vid=voice_id: self.voice_checkboxes[vid]['frame'].configure(
+                    fg_color="#1a4d2e"
+                ))
+                self.after(0, lambda vid=voice_id: self.voice_checkboxes[vid]['var'].set(False))
+
+            except Exception as e:
+                # Mark as failed
+                self.after(0, lambda vid=voice_id, err=str(e): self.voice_checkboxes[vid]['status_label'].configure(
+                    text="Failed", text_color="red"
+                ))
+                self.after(0, lambda err=str(e): messagebox.showerror(
+                    "Download Error",
+                    f"Failed to download {voice['name']}:\n{err}"
+                ))
+
+        # Re-enable download button
+        self.after(0, lambda: self.progress_label.configure(text="Download complete!"))
+        self.after(0, lambda: self.download_btn.configure(state="normal", text="Download Selected"))
+        self.is_downloading = False
 
 
 def main():
