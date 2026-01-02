@@ -154,6 +154,7 @@ class TTRPGVoiceLab(ctk.CTk):
         # Window configuration
         self.title("The Artificer - TTS Voice Generator")
         self.geometry("1000x700")
+        self.minsize(1000, 700)  # Set minimum window size
 
         # Initialize pygame mixer for audio playback (if available)
         if PYGAME_AVAILABLE:
@@ -201,9 +202,12 @@ class TTRPGVoiceLab(ctk.CTk):
         # Build UI
         self.build_ui()
 
-        # Force window to render and update layout
+        # Force window to render and update layout properly
+        self.update()  # Full update instead of just idletasks
+
+        # Force geometry recalculation
+        self.geometry("1000x700")
         self.update_idletasks()
-        self.deiconify()  # Ensure window is visible
 
         # Check for Piper model
         self.check_piper_model()
@@ -282,6 +286,7 @@ class TTRPGVoiceLab(ctk.CTk):
         self.voice_frame = ctk.CTkFrame(self.main_frame)
         self.voice_frame.grid(row=2, column=0, padx=20, pady=(0, 10), sticky="ew")
         self.voice_frame.grid_columnconfigure(1, weight=1)
+        self.voice_frame.grid_columnconfigure(2, weight=0)  # Configure column for button
 
         ctk.CTkLabel(
             self.voice_frame,
