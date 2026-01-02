@@ -141,6 +141,146 @@ VOICE_CATALOG = [
         "quality": "medium",
         "size_mb": 51,
         "sample_url": "https://rhasspy.github.io/piper-samples/samples/en/en_GB/northern_english_male/medium/speaker_0.mp3"
+    },
+    # Spanish voices
+    {
+        "id": "es_ES-mls_9972-low",
+        "name": "Spanish (Spain) - Male",
+        "description": "Clear Spanish voice. Perfect for: Spanish NPCs, Multilingual campaigns",
+        "language": "es/es_ES",
+        "voice": "mls_9972",
+        "quality": "low",
+        "size_mb": 18,
+        "sample_url": "https://rhasspy.github.io/piper-samples/samples/es/es_ES/mls_9972/low/speaker_0.mp3"
+    },
+    {
+        "id": "es_MX-ald-medium",
+        "name": "Spanish (Mexico) - Male",
+        "description": "Mexican Spanish voice. Perfect for: Latin-inspired campaigns, Spanish NPCs",
+        "language": "es/es_MX",
+        "voice": "ald",
+        "quality": "medium",
+        "size_mb": 51,
+        "sample_url": "https://rhasspy.github.io/piper-samples/samples/es/es_MX/ald/medium/speaker_0.mp3"
+    },
+    # French voices
+    {
+        "id": "fr_FR-siwis-medium",
+        "name": "French - Female",
+        "description": "Clear French female voice. Perfect for: French NPCs, European campaigns",
+        "language": "fr/fr_FR",
+        "voice": "siwis",
+        "quality": "medium",
+        "size_mb": 51,
+        "sample_url": "https://rhasspy.github.io/piper-samples/samples/fr/fr_FR/siwis/medium/speaker_0.mp3"
+    },
+    {
+        "id": "fr_FR-mls_1840-low",
+        "name": "French - Male",
+        "description": "Clear French male voice. Perfect for: French NPCs, Nobles, Merchants",
+        "language": "fr/fr_FR",
+        "voice": "mls_1840",
+        "quality": "low",
+        "size_mb": 18,
+        "sample_url": "https://rhasspy.github.io/piper-samples/samples/fr/fr_FR/mls_1840/low/speaker_0.mp3"
+    },
+    # German voices
+    {
+        "id": "de_DE-thorsten-medium",
+        "name": "German - Male",
+        "description": "Clear German male voice. Perfect for: German NPCs, Central European campaigns",
+        "language": "de/de_DE",
+        "voice": "thorsten",
+        "quality": "medium",
+        "size_mb": 87,
+        "sample_url": "https://rhasspy.github.io/piper-samples/samples/de/de_DE/thorsten/medium/speaker_0.mp3"
+    },
+    {
+        "id": "de_DE-eva_k-x_low",
+        "name": "German - Female",
+        "description": "German female voice. Perfect for: German NPCs, Merchants, Scholars",
+        "language": "de/de_DE",
+        "voice": "eva_k",
+        "quality": "x_low",
+        "size_mb": 18,
+        "sample_url": "https://rhasspy.github.io/piper-samples/samples/de/de_DE/eva_k/x_low/speaker_0.mp3"
+    },
+    # Japanese voices
+    {
+        "id": "ja_JP-natsunatsu-medium",
+        "name": "Japanese - Female",
+        "description": "Japanese female voice. Perfect for: Japanese campaigns, Asian-inspired NPCs",
+        "language": "ja/ja_JP",
+        "voice": "natsunatsu",
+        "quality": "medium",
+        "size_mb": 51,
+        "sample_url": "https://rhasspy.github.io/piper-samples/samples/ja/ja_JP/natsunatsu/medium/speaker_0.mp3"
+    },
+    # Italian voices
+    {
+        "id": "it_IT-riccardo-x_low",
+        "name": "Italian - Male",
+        "description": "Italian male voice. Perfect for: Italian NPCs, Mediterranean campaigns",
+        "language": "it/it_IT",
+        "voice": "riccardo",
+        "quality": "x_low",
+        "size_mb": 18,
+        "sample_url": "https://rhasspy.github.io/piper-samples/samples/it/it_IT/riccardo/x_low/speaker_0.mp3"
+    },
+    # Portuguese voices
+    {
+        "id": "pt_BR-faber-medium",
+        "name": "Portuguese (Brazil) - Male",
+        "description": "Brazilian Portuguese voice. Perfect for: Portuguese NPCs, South American campaigns",
+        "language": "pt/pt_BR",
+        "voice": "faber",
+        "quality": "medium",
+        "size_mb": 51,
+        "sample_url": "https://rhasspy.github.io/piper-samples/samples/pt/pt_BR/faber/medium/speaker_0.mp3"
+    },
+    # Russian voices
+    {
+        "id": "ru_RU-dmitri-medium",
+        "name": "Russian - Male",
+        "description": "Russian male voice. Perfect for: Slavic-inspired campaigns, Eastern NPCs",
+        "language": "ru/ru_RU",
+        "voice": "dmitri",
+        "quality": "medium",
+        "size_mb": 51,
+        "sample_url": "https://rhasspy.github.io/piper-samples/samples/ru/ru_RU/dmitri/medium/speaker_0.mp3"
+    },
+    # Dutch voices
+    {
+        "id": "nl_NL-mls_5809-low",
+        "name": "Dutch - Male",
+        "description": "Dutch male voice. Perfect for: Dutch NPCs, Low Countries campaigns",
+        "language": "nl/nl_NL",
+        "voice": "mls_5809",
+        "quality": "low",
+        "size_mb": 18,
+        "sample_url": "https://rhasspy.github.io/piper-samples/samples/nl/nl_NL/mls_5809/low/speaker_0.mp3"
+    },
+    # Polish voices
+    {
+        "id": "pl_PL-mls_6892-low",
+        "name": "Polish - Male",
+        "description": "Polish male voice. Perfect for: Slavic campaigns, Eastern European NPCs",
+        "language": "pl/pl_PL",
+        "voice": "mls_6892",
+        "quality": "low",
+        "size_mb": 18,
+        "sample_url": "https://rhasspy.github.io/piper-samples/samples/pl/pl_PL/mls_6892/low/speaker_0.mp3"
+    },
+    # Swedish voices
+    {
+        "id": "sv_SE-nst-medium",
+        "name": "Swedish - Male",
+        "description": "Swedish male voice. Perfect for: Nordic campaigns, Scandinavian NPCs",
+        "language": "sv/sv_SE",
+        "voice": "nst",
+        "quality": "medium",
+        "size_mb": 51,
+        "sample_url": "https://rhasspy.github.io/piper-samples/samples/sv/sv_SE/nst/medium/speaker_0.mp3"
     }
 ]
 
