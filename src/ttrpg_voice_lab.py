@@ -1128,6 +1128,33 @@ class VoiceDownloaderDialog(ctk.CTkToplevel):
         # Check which voices are already installed
         self.update_installed_voices()
 
+        # Center window on parent and bring to front
+        self.center_on_parent(parent)
+        self.lift()  # Bring to front
+        self.focus_force()  # Force keyboard focus
+        self.after(10, lambda: self.lift())  # Ensure it stays on top
+
+    def center_on_parent(self, parent):
+        """Center the dialog on the parent window"""
+        self.update_idletasks()  # Update window to get accurate dimensions
+
+        # Get parent window position and size
+        parent_x = parent.winfo_x()
+        parent_y = parent.winfo_y()
+        parent_width = parent.winfo_width()
+        parent_height = parent.winfo_height()
+
+        # Get dialog size
+        dialog_width = 800
+        dialog_height = 600
+
+        # Calculate center position
+        x = parent_x + (parent_width - dialog_width) // 2
+        y = parent_y + (parent_height - dialog_height) // 2
+
+        # Set position
+        self.geometry(f"{dialog_width}x{dialog_height}+{x}+{y}")
+
     def build_ui(self):
         """Build the dialog UI"""
         # Main frame
