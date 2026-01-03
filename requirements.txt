@@ -4,6 +4,8 @@ pydub>=0.25.1
 numpy>=1.24.0
 pyinstaller>=6.0.0
 audioop-lts>=0.2.1  # Required for Python 3.13+ (audioop replacement)
+pycaw>=20230407  # Windows audio control for Discord integration
+comtypes>=1.2.0  # Required by pycaw for COM interfaces
 # Note: Piper TTS is a standalone executable, not a pip package
 # Download from: https://github.com/rhasspy/piper/releases
 # pygame>=2.5.0  # Optional - only needed for preview playback

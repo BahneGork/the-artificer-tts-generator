@@ -45,6 +45,15 @@ from pedalboard import (
     PitchShift
 )
 
+# Try to import pycaw for Windows audio device control (Discord integration)
+try:
+    from comtypes import CLSCTX_ALL
+    from pycaw.pycaw import AudioUtilities, IMMDeviceEnumerator, EDataFlow, ERole
+    PYCAW_AVAILABLE = True
+except ImportError:
+    PYCAW_AVAILABLE = False
+    print("Warning: pycaw not available. Discord integration will be disabled.")
+
 # Try to import pygame for audio playback (optional)
 try:
     import pygame.mixer
@@ -314,6 +323,188 @@ VOICE_CATALOG = [
 ]
 
 
+class AudioDeviceManager:
+    """
+    Manages Windows audio device switching for Discord integration.
+    Handles automatic device switching and restoration for "Send to Discord" feature.
+    """
+
+    def __init__(self):
+        self.original_device_id = None
+        self.original_device_name = None
+        self.is_discord_mode = False
+        self.pycaw_available = PYCAW_AVAILABLE
+
+    def get_all_recording_devices(self):
+        """Get list of all recording devices"""
+        if not self.pycaw_available:
+            return []
+
+        try:
+            devices = []
+            device_enumerator = AudioUtilities.GetDeviceEnumerator()
+
+            # Get all active recording devices
+            endpoints = device_enumerator.EnumAudioEndpoints(EDataFlow.eCapture.value, 1)  # 1 = DEVICE_STATE_ACTIVE
+
+            for i in range(endpoints.GetCount()):
+                endpoint = endpoints.Item(i)
+                device_id = endpoint.GetId()
+
+                # Get friendly name
+                from comtypes import cast
+                from pycaw.pycaw import IPropertyStore
+                store = cast(endpoint.OpenPropertyStore(0), IPropertyStore)
+
+                # PKEY_Device_FriendlyName
+                from pycaw.constants import PKEY_Device_FriendlyName
+                name = store.GetValue(PKEY_Device_FriendlyName).GetValue()
+
+                devices.append({
+                    'id': device_id,
+                    'name': name,
+                    'endpoint': endpoint
+                })
+
+            return devices
+        except Exception as e:
+            print(f"Error getting recording devices: {e}")
+            return []
+
+    def get_current_default_device(self):
+        """Get the current default recording device"""
+        if not self.pycaw_available:
+            return None
+
+        try:
+            device_enumerator = AudioUtilities.GetDeviceEnumerator()
+            default_device = device_enumerator.GetDefaultAudioEndpoint(
+                EDataFlow.eCapture.value,  # Recording devices
+                ERole.eConsole.value       # Default device
+            )
+
+            device_id = default_device.GetId()
+
+            # Get friendly name
+            from comtypes import cast
+            from pycaw.pycaw import IPropertyStore
+            store = cast(default_device.OpenPropertyStore(0), IPropertyStore)
+            from pycaw.constants import PKEY_Device_FriendlyName
+            name = store.GetValue(PKEY_Device_FriendlyName).GetValue()
+
+            return {
+                'id': device_id,
+                'name': name,
+                'endpoint': default_device
+            }
+        except Exception as e:
+            print(f"Error getting default device: {e}")
+            return None
+
+    def set_default_device(self, device_id):
+        """Set a device as the default recording device"""
+        if not self.pycaw_available:
+            return False
+
+        try:
+            # This requires IMMDevice.SetDefaultAudioEndpoint which is not directly
+            # exposed in pycaw. We need to use PolicyConfig COM interface.
+            from comtypes import CoCreateInstance
+            from pycaw.pycaw import IPolicyConfig
+
+            policy_config = CoCreateInstance(
+                '{870af99c-171d-4f9e-af0d-e63df40c2bc9}',  # CLSID_CPolicyConfigClient
+                IPolicyConfig,
+                CLSCTX_ALL
+            )
+
+            # Set as default for all roles
+            policy_config.SetDefaultEndpoint(device_id, ERole.eConsole.value)
+            policy_config.SetDefaultEndpoint(device_id, ERole.eMultimedia.value)
+            policy_config.SetDefaultEndpoint(device_id, ERole.eCommunications.value)
+
+            return True
+        except Exception as e:
+            print(f"Error setting default device: {e}")
+            return False
+
+    def find_virtual_cable(self):
+        """Find VB-CABLE or similar virtual audio device"""
+        devices = self.get_all_recording_devices()
+
+        # Look for common virtual cable names
+        virtual_cable_keywords = ['CABLE', 'VoiceMeeter', 'Virtual', 'VAC']
+
+        for device in devices:
+            name = device['name']
+            for keyword in virtual_cable_keywords:
+                if keyword.lower() in name.lower():
+                    return device
+
+        return None
+
+    def switch_to_virtual_cable(self):
+        """Switch default recording device to virtual cable for Discord"""
+        # Save current device
+        current = self.get_current_default_device()
+        if not current:
+            return False, "Could not detect current microphone"
+
+        self.original_device_id = current['id']
+        self.original_device_name = current['name']
+
+        # Find virtual cable
+        virtual_cable = self.find_virtual_cable()
+        if not virtual_cable:
+            return False, "No virtual cable found. Please install VB-CABLE first."
+
+        # Switch to virtual cable
+        success = self.set_default_device(virtual_cable['id'])
+        if success:
+            self.is_discord_mode = True
+            return True, f"Switched from '{self.original_device_name}' to '{virtual_cable['name']}'"
+        else:
+            return False, "Failed to switch audio device"
+
+    def restore_original_device(self):
+        """Restore original microphone"""
+        if not self.original_device_id:
+            return False, "No original device to restore"
+
+        success = self.set_default_device(self.original_device_id)
+        if success:
+            name = self.original_device_name
+            self.original_device_id = None
+            self.original_device_name = None
+            self.is_discord_mode = False
+            return True, f"Restored to '{name}'"
+        else:
+            return False, "Failed to restore microphone"
+
+    def emergency_reset(self):
+        """Emergency reset - find first real microphone and use it"""
+        devices = self.get_all_recording_devices()
+
+        # Filter out virtual cables
+        real_mics = [d for d in devices if not any(
+            keyword in d['name'].lower()
+            for keyword in ['cable', 'voicemeeter', 'virtual', 'vac']
+        )]
+
+        if not real_mics:
+            return False, "No real microphone found"
+
+        # Use first real mic
+        success = self.set_default_device(real_mics[0]['id'])
+        if success:
+            self.original_device_id = None
+            self.original_device_name = None
+            self.is_discord_mode = False
+            return True, f"Reset to '{real_mics[0]['name']}'"
+        else:
+            return False, "Emergency reset failed"
+
+
 class TTRPGVoiceLab(ctk.CTk):
     """Main application class for TTRPG Voice Lab"""
 
@@ -334,6 +525,10 @@ class TTRPGVoiceLab(ctk.CTk):
         self.presets: list = []
         self.temp_files: list = []
         self.is_generating = False
+        self.is_sending_to_discord = False  # Track Discord playback state
+
+        # Initialize audio device manager for Discord integration
+        self.audio_device_manager = AudioDeviceManager()
 
         # Paths - handle both development and PyInstaller frozen app
         if getattr(sys, 'frozen', False):
@@ -738,6 +933,48 @@ class TTRPGVoiceLab(ctk.CTk):
         )
         self.export_button.grid(row=0, column=1, padx=(10, 0), pady=10, sticky="ew")
 
+        # Discord integration buttons (row 1)
+        self.send_to_discord_button = ctk.CTkButton(
+            self.button_frame,
+            text="🎙️ Send to Discord",
+            command=self.send_to_discord,
+            height=45,
+            font=ctk.CTkFont(size=15, weight="bold"),
+            fg_color="#5865F2",  # Discord blurple
+            hover_color="#4752C4"
+        )
+        self.send_to_discord_button.grid(row=1, column=0, padx=(0, 10), pady=(0, 10), sticky="ew")
+
+        # Cancel button (initially hidden)
+        self.cancel_discord_button = ctk.CTkButton(
+            self.button_frame,
+            text="⏹️ Cancel & Restore Mic",
+            command=self.cancel_discord_playback,
+            height=45,
+            font=ctk.CTkFont(size=15, weight="bold"),
+            fg_color="#ED4245",  # Discord red
+            hover_color="#C03537"
+        )
+        self.cancel_discord_button.grid(row=1, column=1, padx=(10, 0), pady=(0, 10), sticky="ew")
+        self.cancel_discord_button.grid_remove()  # Hide initially
+
+        # Discord status indicator
+        self.discord_status_label = ctk.CTkLabel(
+            self.button_frame,
+            text="",
+            font=ctk.CTkFont(size=11),
+            text_color="gray"
+        )
+        self.discord_status_label.grid(row=2, column=0, columnspan=2, pady=(0, 5))
+
+        # Show/hide Discord buttons based on pycaw availability
+        if not PYCAW_AVAILABLE:
+            self.send_to_discord_button.configure(state="disabled", text="🎙️ Discord (Not Available)")
+            self.discord_status_label.configure(
+                text="Install pycaw for Discord integration (Windows only)",
+                text_color="orange"
+            )
+
         # Status bar
         self.status_label = ctk.CTkLabel(
             self.main_frame,
@@ -804,6 +1041,21 @@ class TTRPGVoiceLab(ctk.CTk):
         )
         self.voice_description_label.grid(row=5, column=0, padx=20, pady=(0, 10), sticky="nw")
 
+        # Emergency reset audio button (Discord integration)
+        self.reset_audio_btn = ctk.CTkButton(
+            self.voice_sidebar,
+            text="🔧 Reset Audio Device",
+            command=self.emergency_reset_audio,
+            height=35,
+            fg_color="#ED4245",  # Discord red
+            hover_color="#C03537"
+        )
+        self.reset_audio_btn.grid(row=7, column=0, padx=20, pady=(20, 5), sticky="ew")
+
+        # Show/hide reset button based on pycaw availability
+        if not PYCAW_AVAILABLE:
+            self.reset_audio_btn.grid_remove()
+
         # About / License button
         self.about_btn = ctk.CTkButton(
             self.voice_sidebar,
@@ -813,7 +1065,7 @@ class TTRPGVoiceLab(ctk.CTk):
             fg_color="gray30",
             hover_color="gray20"
         )
-        self.about_btn.grid(row=7, column=0, padx=20, pady=(20, 20), sticky="ew")
+        self.about_btn.grid(row=8, column=0, padx=20, pady=(5, 20), sticky="ew")
 
         # Populate voice models (moved to after status_label creation)
         self.voice_models = {}  # Dictionary: display_name -> model_path
@@ -1430,6 +1682,220 @@ Voice models are NOT distributed with this application.
         self.export_button.configure(state="disabled")
         thread = threading.Thread(target=self.export_audio_thread, args=(filename,), daemon=True)
         thread.start()
+
+    def send_to_discord_thread(self):
+        """Thread function for sending audio to Discord"""
+        try:
+            self.status_label.configure(text="Generating TTS for Discord...")
+            self.is_sending_to_discord = True
+
+            # Get text
+            text = self.text_input.get("1.0", "end-1c").strip()
+            if not text:
+                messagebox.showwarning("Warning", "Please enter some text to speak.")
+                return
+
+            # Generate TTS
+            tts_file = self.generate_tts(text)
+            if not tts_file:
+                return
+
+            self.status_label.configure(text="Applying effects...")
+
+            # Apply effects
+            processed_audio = self.apply_effects(tts_file)
+            if not processed_audio:
+                return
+
+            # Create temporary WAV file for playback
+            temp_discord_file = tempfile.NamedTemporaryFile(delete=False, suffix='.wav')
+            temp_discord_path = temp_discord_file.name
+            temp_discord_file.close()
+            self.temp_files.append(temp_discord_path)
+
+            # Export processed audio
+            processed_audio.export(temp_discord_path, format='wav')
+
+            # Switch to virtual cable
+            self.status_label.configure(text="Switching to virtual cable...")
+            success, message = self.audio_device_manager.switch_to_virtual_cable()
+
+            if not success:
+                messagebox.showerror("Discord Error", f"{message}\n\nSetup instructions:\n1. Install VB-CABLE from vb-audio.com\n2. Set Discord input to 'Default'\n3. Restart this app")
+                self.status_label.configure(text="Ready")
+                return
+
+            self.discord_status_label.configure(text=f"🎙️ {message}", text_color="#43B581")  # Discord green
+
+            # Wait for Discord to detect device change
+            import time
+            time.sleep(0.5)
+
+            # Play audio to virtual cable (this goes to Discord)
+            self.status_label.configure(text="Playing to Discord...")
+
+            # Load and play audio
+            audio_to_play = AudioSegment.from_file(temp_discord_path)
+
+            # Play in chunks so we can check for cancellation
+            chunk_size = 100  # milliseconds
+            for i in range(0, len(audio_to_play), chunk_size):
+                if not self.is_sending_to_discord:
+                    # Cancelled
+                    break
+
+                chunk = audio_to_play[i:i+chunk_size]
+
+                # Use pydub's playback
+                from pydub.playback import play
+                play(chunk)
+
+            # Restore microphone
+            time.sleep(0.3)  # Brief pause before switching back
+            self.status_label.configure(text="Restoring microphone...")
+            success, message = self.audio_device_manager.restore_original_device()
+
+            if success:
+                self.discord_status_label.configure(text=f"✓ {message}", text_color="#43B581")
+                self.status_label.configure(text="Discord playback complete - Ready")
+            else:
+                self.discord_status_label.configure(text=f"⚠️ {message}", text_color="orange")
+                self.status_label.configure(text="Warning: Could not restore mic - Ready")
+
+        except Exception as e:
+            import traceback
+            error_details = traceback.format_exc()
+            print(f"Discord error: {error_details}")
+
+            # Try to restore microphone on error
+            try:
+                self.audio_device_manager.restore_original_device()
+            except:
+                pass
+
+            messagebox.showerror("Error", f"Discord playback failed: {str(e)}")
+            self.discord_status_label.configure(text="❌ Playback failed", text_color="red")
+            self.status_label.configure(text="Error - Ready")
+
+        finally:
+            self.is_sending_to_discord = False
+            self.send_to_discord_button.grid()
+            self.cancel_discord_button.grid_remove()
+            self.send_to_discord_button.configure(state="normal")
+
+    def send_to_discord(self):
+        """Send audio to Discord via virtual cable"""
+        if self.is_generating or self.is_sending_to_discord:
+            messagebox.showinfo("Info", "Audio generation in progress...")
+            return
+
+        if not PYCAW_AVAILABLE:
+            messagebox.showerror("Not Available", "Discord integration requires pycaw library.\n\nInstall with: pip install pycaw comtypes")
+            return
+
+        # Check for virtual cable
+        virtual_cable = self.audio_device_manager.find_virtual_cable()
+        if not virtual_cable:
+            response = messagebox.askyesno(
+                "VB-CABLE Not Found",
+                "Virtual audio cable not detected.\n\n"
+                "To use Discord integration:\n"
+                "1. Install VB-CABLE (free) from vb-audio.com\n"
+                "2. Restart your computer\n"
+                "3. Set Discord input to 'Default'\n\n"
+                "Open VB-CABLE download page now?"
+            )
+            if response:
+                import webbrowser
+                webbrowser.open("https://vb-audio.com/Cable/")
+            return
+
+        # Hide send button, show cancel button
+        self.send_to_discord_button.grid_remove()
+        self.cancel_discord_button.grid()
+        self.send_to_discord_button.configure(state="disabled")
+
+        # Start playback thread
+        thread = threading.Thread(target=self.send_to_discord_thread, daemon=True)
+        thread.start()
+
+    def cancel_discord_playback(self):
+        """Cancel Discord playback and restore microphone"""
+        self.is_sending_to_discord = False
+        self.status_label.configure(text="Cancelling...")
+
+        # Restore microphone
+        try:
+            success, message = self.audio_device_manager.restore_original_device()
+            if success:
+                self.discord_status_label.configure(text=f"⏹️ Cancelled - {message}", text_color="orange")
+            else:
+                self.discord_status_label.configure(text=f"⚠️ {message}", text_color="red")
+        except Exception as e:
+            self.discord_status_label.configure(text=f"⚠️ Error restoring mic: {str(e)}", text_color="red")
+
+        # Restore UI
+        self.send_to_discord_button.grid()
+        self.cancel_discord_button.grid_remove()
+        self.send_to_discord_button.configure(state="normal")
+        self.status_label.configure(text="Cancelled - Ready")
+
+    def emergency_reset_audio(self):
+        """Emergency reset - restore microphone if stuck on virtual cable"""
+        if not PYCAW_AVAILABLE:
+            messagebox.showerror("Not Available", "Audio device management not available on this system.")
+            return
+
+        # Get current device info
+        current_device = self.audio_device_manager.get_current_default_device()
+        if not current_device:
+            messagebox.showerror("Error", "Could not detect current audio device.")
+            return
+
+        current_name = current_device['name']
+
+        # Check if currently on virtual cable
+        is_on_virtual = any(
+            keyword in current_name.lower()
+            for keyword in ['cable', 'voicemeeter', 'virtual', 'vac']
+        )
+
+        if is_on_virtual:
+            # Stuck on virtual cable - emergency reset
+            response = messagebox.askyesno(
+                "Emergency Reset",
+                f"Current input device: {current_name}\n\n"
+                "This appears to be a virtual cable.\n"
+                "Reset to your real microphone?\n\n"
+                "Note: This will find and switch to your first real microphone."
+            )
+
+            if not response:
+                return
+
+            success, message = self.audio_device_manager.emergency_reset()
+
+            if success:
+                messagebox.showinfo("Success", f"Audio device reset!\n\n{message}")
+                self.discord_status_label.configure(text=f"🔧 {message}", text_color="#43B581")
+                self.status_label.configure(text="Audio device reset - Ready")
+            else:
+                messagebox.showerror("Error", f"Emergency reset failed:\n{message}")
+                self.discord_status_label.configure(text="❌ Reset failed", text_color="red")
+
+        else:
+            # Not on virtual cable - show info dialog
+            all_devices = self.audio_device_manager.get_all_recording_devices()
+
+            device_list = "\n".join([f"• {d['name']}" for d in all_devices])
+
+            messagebox.showinfo(
+                "Audio Device Status",
+                f"Current input device:\n{current_name}\n\n"
+                "This appears to be your real microphone.\n\n"
+                f"Available recording devices:\n{device_list}\n\n"
+                "No reset needed. Use this button if your mic gets stuck on virtual cable after app crash."
+            )
 
     def cleanup_temp_files(self):
         """Clean up temporary files"""
