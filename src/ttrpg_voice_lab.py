@@ -27,6 +27,7 @@ import sys
 import json
 import threading
 import tempfile
+import webbrowser
 from pathlib import Path
 from typing import Optional, Dict, Any
 
@@ -1797,17 +1798,33 @@ Voice models are NOT distributed with this application.
         virtual_cable = self.audio_device_manager.find_virtual_cable()
         if not virtual_cable:
             response = messagebox.askyesno(
-                "VB-CABLE Not Found",
+                "VB-CABLE Setup Required",
                 "Virtual audio cable not detected.\n\n"
-                "To use Discord integration:\n"
-                "1. Install VB-CABLE (free) from vb-audio.com\n"
-                "2. Restart your computer\n"
-                "3. Set Discord input to 'Default'\n\n"
-                "Open VB-CABLE download page now?"
+                "VB-CABLE is required for Discord integration.\n"
+                "It's free, takes 2 minutes to install, and works great!\n\n"
+                "Open the step-by-step setup guide now?"
             )
             if response:
-                import webbrowser
-                webbrowser.open("https://vb-audio.com/Cable/")
+                # Try to open local HTML setup guide
+                try:
+                    if getattr(sys, 'frozen', False):
+                        # Running as PyInstaller bundle
+                        base_path = sys._MEIPASS
+                    else:
+                        # Running as script
+                        base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+                    setup_guide_path = os.path.join(base_path, 'docs', 'vb-cable-setup.html')
+
+                    if os.path.exists(setup_guide_path):
+                        # Open local HTML file
+                        webbrowser.open(f'file://{os.path.abspath(setup_guide_path)}')
+                    else:
+                        # Fallback to online VB-Audio website if HTML file not found
+                        webbrowser.open("https://vb-audio.com/Cable/")
+                except Exception as e:
+                    # Fallback to online VB-Audio website
+                    webbrowser.open("https://vb-audio.com/Cable/")
             return
 
         # Hide send button, show cancel button
