@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VB-CABLE Setup Guide - The Artificer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #5865F2 0%, #4752C4 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px 30px;
+        }
+
+        .step {
+            margin-bottom: 40px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 5px solid #5865F2;
+        }
+
+        .step h2 {
+            color: #5865F2;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+        }
+
+        .step h3 {
+            color: #333;
+            margin: 20px 0 10px 0;
+            font-size: 1.3em;
+        }
+
+        .step p, .step li {
+            color: #555;
+            line-height: 1.8;
+            margin-bottom: 10px;
+        }
+
+        .step ol, .step ul {
+            margin-left: 30px;
+            margin-top: 15px;
+        }
+
+        .step li {
+            margin-bottom: 12px;
+        }
+
+        .download-btn {
+            display: inline-block;
+            background: #5865F2;
+            color: white;
+            padding: 15px 40px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 1.1em;
+            margin: 15px 0;
+            transition: background 0.3s;
+        }
+
+        .download-btn:hover {
+            background: #4752C4;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border-left-color: #ffc107;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 6px;
+            border-left: 5px solid #ffc107;
+        }
+
+        .warning h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .warning p {
+            color: #856404;
+        }
+
+        .success {
+            background: #d4edda;
+            border-left-color: #28a745;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 6px;
+            border-left: 5px solid #28a745;
+        }
+
+        .success h3 {
+            color: #155724;
+            margin-bottom: 10px;
+        }
+
+        .success p {
+            color: #155724;
+        }
+
+        .attribution {
+            background: #e7f3ff;
+            padding: 25px;
+            margin: 30px 0;
+            border-radius: 8px;
+            border-left: 5px solid #0066cc;
+        }
+
+        .attribution h3 {
+            color: #0066cc;
+            margin-bottom: 15px;
+        }
+
+        .attribution p {
+            color: #004080;
+            margin-bottom: 10px;
+        }
+
+        .code {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+
+        .screenshot {
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            margin: 15px 0;
+            max-width: 100%;
+        }
+
+        .footer {
+            background: #f8f9fa;
+            padding: 30px;
+            text-align: center;
+            color: #666;
+            border-top: 1px solid #ddd;
+        }
+
+        .footer a {
+            color: #5865F2;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎙️ VB-CABLE Setup Guide</h1>
+            <p>Enable Discord Integration for The Artificer</p>
+        </div>
+
+        <div class="content">
+            <!-- Introduction -->
+            <div class="step">
+                <h2>📋 What is VB-CABLE?</h2>
+                <p><strong>VB-CABLE</strong> is a virtual audio cable that allows you to route audio between applications on Windows.</p>
+                <p>For The Artificer, VB-CABLE enables the <strong>"Send to Discord"</strong> feature, which lets you play NPC voices directly into your Discord voice chat during live TTRPG sessions.</p>
+
+                <h3>How It Works:</h3>
+                <ol>
+                    <li>VB-CABLE creates a virtual microphone on your computer</li>
+                    <li>The Artificer plays audio into this virtual microphone</li>
+                    <li>Discord picks it up as if you were speaking into a real mic</li>
+                    <li>Your party hears the NPC voice in real-time!</li>
+                </ol>
+
+                <div class="attribution">
+                    <h3>About VB-CABLE</h3>
+                    <p><strong>VB-CABLE</strong> is developed by <strong>VB-Audio Software</strong> (Vincent Burel)</p>
+                    <p><strong>License:</strong> Donationware - Free to use, donations appreciated</p>
+                    <p><strong>Website:</strong> <a href="https://vb-audio.com/Cable/" target="_blank">https://vb-audio.com/Cable/</a></p>
+                    <p style="margin-top: 15px;"><em>If you find VB-CABLE useful, please consider donating to VB-Audio to support their development!</em></p>
+                </div>
+            </div>
+
+            <!-- Step 1: Download -->
+            <div class="step">
+                <h2>📥 Step 1: Download VB-CABLE</h2>
+                <p>Download the official VB-CABLE installer from VB-Audio Software:</p>
+                <a href="https://vb-audio.com/Cable/" target="_blank" class="download-btn">
+                    Download VB-CABLE (Official Website)
+                </a>
+
+                <h3>Download Instructions:</h3>
+                <ol>
+                    <li>Click the download button above to visit the official VB-Audio website</li>
+                    <li>Look for the <strong>"VBCABLE_Driver_Pack43.zip"</strong> download link (or latest version)</li>
+                    <li>Click the download link to get the installer</li>
+                    <li>Save the ZIP file to your Downloads folder</li>
+                </ol>
+
+                <div class="warning">
+                    <h3>⚠️ Important: Use Official Source Only</h3>
+                    <p>Always download VB-CABLE from the official VB-Audio website (vb-audio.com). Do not download from third-party sites to avoid malware or modified versions.</p>
+                </div>
+            </div>
+
+            <!-- Step 2: Install -->
+            <div class="step">
+                <h2>🔧 Step 2: Install VB-CABLE</h2>
+
+                <h3>Installation Steps:</h3>
+                <ol>
+                    <li><strong>Extract the ZIP file</strong> you downloaded</li>
+                    <li><strong>Right-click</strong> on <code>VBCABLE_Setup_x64.exe</code> (for 64-bit Windows)</li>
+                    <li>Select <strong>"Run as Administrator"</strong></li>
+                    <li>Click <strong>"Install Driver"</strong> in the installer window</li>
+                    <li>Wait for the installation to complete (takes about 10 seconds)</li>
+                    <li>Click <strong>"OK"</strong> when you see "Installation Complete"</li>
+                    <li><strong>Restart your computer</strong> to complete installation</li>
+                </ol>
+
+                <div class="warning">
+                    <h3>⚠️ Administrator Rights Required</h3>
+                    <p>You MUST run the installer as Administrator. Audio drivers require system-level permissions to install properly.</p>
+                </div>
+
+                <div class="success">
+                    <h3>✅ Verify Installation</h3>
+                    <p>After restarting, verify VB-CABLE is installed:</p>
+                    <ol>
+                        <li>Open Windows <strong>Sound Settings</strong> (right-click speaker icon in taskbar)</li>
+                        <li>Go to <strong>Sound Control Panel</strong> → <strong>Recording</strong> tab</li>
+                        <li>You should see <strong>"CABLE Output"</strong> listed as a recording device</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- Step 3: Discord Configuration -->
+            <div class="step">
+                <h2>🎮 Step 3: Configure Discord</h2>
+                <p>Configure Discord to allow Windows to control your microphone automatically:</p>
+
+                <h3>Discord Settings:</h3>
+                <ol>
+                    <li>Open <strong>Discord</strong></li>
+                    <li>Click the <strong>⚙️ Settings</strong> icon (bottom left)</li>
+                    <li>Go to <strong>Voice & Video</strong></li>
+                    <li>Under <strong>Input Device</strong>, select <strong>"Default"</strong></li>
+                    <li>Scroll down and <strong>disable</strong> these options:
+                        <ul>
+                            <li>❌ Automatically determine input sensitivity</li>
+                            <li>✅ Use Push-to-Talk instead (optional, but recommended)</li>
+                        </ul>
+                    </li>
+                </ol>
+
+                <div class="warning">
+                    <h3>🎯 Why "Default" Input?</h3>
+                    <p>Setting Discord to "Default" allows The Artificer to automatically switch between your real microphone and the virtual cable. This is what makes the "Send to Discord" button work seamlessly!</p>
+                </div>
+
+                <h3>Testing Your Setup:</h3>
+                <ol>
+                    <li>Join a Discord voice channel (or use Discord's Mic Test)</li>
+                    <li>Speak normally - your friends should hear you through your real mic</li>
+                    <li>Open The Artificer and type some text</li>
+                    <li>Click <strong>"🎙️ Send to Discord"</strong></li>
+                    <li>The NPC voice should play in Discord!</li>
+                    <li>When finished, your real microphone automatically restores</li>
+                </ol>
+            </div>
+
+            <!-- Step 4: Using The Feature -->
+            <div class="step">
+                <h2>🎭 Step 4: Using "Send to Discord"</h2>
+
+                <h3>Basic Usage:</h3>
+                <ol>
+                    <li>Type your NPC dialogue in The Artificer</li>
+                    <li>Select a voice preset (Goblin, Lich, Warforged, etc.)</li>
+                    <li>Adjust voice effects as desired</li>
+                    <li>Click <strong>"🎙️ Send to Discord"</strong></li>
+                    <li>The audio plays automatically in Discord</li>
+                    <li>Your microphone restores when finished</li>
+                </ol>
+
+                <h3>Emergency Controls:</h3>
+                <ul>
+                    <li><strong>⏹️ Cancel & Restore Mic</strong> - Stops playback immediately and restores your microphone</li>
+                    <li><strong>🔧 Reset Audio Device</strong> - Emergency button to restore your microphone if something goes wrong</li>
+                </ul>
+
+                <div class="success">
+                    <h3>💡 Pro Tips</h3>
+                    <ul>
+                        <li>Use <strong>Preview</strong> to test voices before sending to Discord</li>
+                        <li>Save frequently-used voices as presets</li>
+                        <li>Keep the Emergency Reset button visible for quick access</li>
+                        <li>If Discord doesn't hear the audio, check that Input Device is set to "Default"</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Troubleshooting -->
+            <div class="step">
+                <h2>🔍 Troubleshooting</h2>
+
+                <h3>Problem: "No Virtual Cable Found" Error</h3>
+                <p><strong>Solution:</strong></p>
+                <ol>
+                    <li>Verify VB-CABLE is installed (check Sound Settings → Recording)</li>
+                    <li>If not installed, follow Step 2 above</li>
+                    <li>Make sure you <strong>restarted</strong> after installing VB-CABLE</li>
+                    <li>Try the <strong>🔧 Reset Audio Device</strong> button in The Artificer</li>
+                </ol>
+
+                <h3>Problem: Discord Doesn't Hear The Audio</h3>
+                <p><strong>Solution:</strong></p>
+                <ol>
+                    <li>Check Discord → Settings → Voice & Video</li>
+                    <li>Ensure <strong>Input Device</strong> is set to <strong>"Default"</strong></li>
+                    <li>Disable "Automatically determine input sensitivity"</li>
+                    <li>Try leaving and rejoining the voice channel</li>
+                </ol>
+
+                <h3>Problem: Microphone Stays on Virtual Cable</h3>
+                <p><strong>Solution:</strong></p>
+                <ol>
+                    <li>Click <strong>🔧 Reset Audio Device</strong> in The Artificer</li>
+                    <li>Or manually change default microphone in Windows Sound Settings</li>
+                    <li>Close and restart The Artificer if needed</li>
+                </ol>
+
+                <h3>Problem: Audio Quality Issues</h3>
+                <p><strong>Solution:</strong></p>
+                <ol>
+                    <li>Lower Discord voice bitrate if audio is choppy</li>
+                    <li>Disable unnecessary audio effects in The Artificer</li>
+                    <li>Check your internet connection</li>
+                    <li>Make sure no other apps are using VB-CABLE</li>
+                </ol>
+            </div>
+
+            <!-- Advanced -->
+            <div class="step">
+                <h2>⚙️ Advanced: Manual Setup (Optional)</h2>
+                <p>If you want to route audio manually without using The Artificer's automatic switching:</p>
+
+                <h3>Manual Routing Steps:</h3>
+                <ol>
+                    <li>Play audio normally in The Artificer (Preview button)</li>
+                    <li>Manually set Windows default microphone to "CABLE Output"</li>
+                    <li>Discord will hear whatever plays through VB-CABLE</li>
+                    <li>Manually switch back to your real microphone when done</li>
+                </ol>
+
+                <p><em>This approach gives you more control but requires manual device switching.</em></p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p><strong>The Artificer - TTS Voice Generator</strong></p>
+            <p>Created with ❤️ for TTRPG Game Masters</p>
+            <p><a href="https://github.com/BahneGork/the-artificer-tts-generator" target="_blank">GitHub Repository</a> | <a href="https://vb-audio.com/Cable/" target="_blank">VB-CABLE by VB-Audio</a></p>
+            <p style="margin-top: 15px; font-size: 0.9em;">License: GNU GPL v3 | VB-CABLE: Donationware</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -49,6 +49,12 @@ if exist presets (
     xcopy presets dist\TTRPGVoiceLab\presets\ /E /I /Y >nul
 )
 
+REM Copy documentation (including VB-CABLE setup guide)
+if exist docs (
+    xcopy docs dist\TTRPGVoiceLab\docs\ /E /I /Y >nul
+    echo Documentation copied successfully.
+)
+
 REM Copy source code for GPL compliance
 echo Bundling source code for GPL compliance...
 if not exist dist\TTRPGVoiceLab\source mkdir dist\TTRPGVoiceLab\source
