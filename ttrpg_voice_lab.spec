@@ -26,8 +26,15 @@ for dll in glob.glob('*.dll'):
 # Collect necessary data files
 datas = [
     ('presets', 'presets'),
-    ('models', 'models'),
 ]
+
+# Include models folder if it exists (optional - users can add their own)
+if os.path.exists('models'):
+    datas.append(('models', 'models'))
+
+# Include docs folder (VB-CABLE setup guide, etc.)
+if os.path.exists('docs'):
+    datas.append(('docs', 'docs'))
 
 # Include espeak-ng-data if it exists
 if os.path.exists('espeak-ng-data'):
