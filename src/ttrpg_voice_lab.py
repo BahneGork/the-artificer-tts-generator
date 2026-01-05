@@ -598,11 +598,12 @@ class TTRPGVoiceLab(ctk.CTk):
         self.grid_columnconfigure(0, weight=0)  # Left sidebar - fixed width
         self.grid_columnconfigure(1, weight=1)  # Main content - expands
         self.grid_columnconfigure(2, weight=0)  # Right sidebar - fixed width
-        self.grid_rowconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=1)  # Main content area
+        self.grid_rowconfigure(1, weight=0)  # Status bar at bottom
 
         # Left sidebar for presets
         self.sidebar = ctk.CTkFrame(self, width=250, corner_radius=0)
-        self.sidebar.grid(row=0, column=0, rowspan=2, sticky="nsew")
+        self.sidebar.grid(row=0, column=0, rowspan=1, sticky="nsew")
         self.sidebar.grid_rowconfigure(4, weight=1)
 
         # Sidebar title
@@ -789,7 +790,7 @@ class TTRPGVoiceLab(ctk.CTk):
 
         # Speech controls frame - Row 2
         self.controls_frame_speech = ctk.CTkFrame(self.main_frame)
-        self.controls_frame_speech.grid(row=5, column=0, padx=20, pady=(0, 10), sticky="ew")
+        self.controls_frame_speech.grid(row=6, column=0, padx=20, pady=(0, 10), sticky="ew")
         self.controls_frame_speech.grid_columnconfigure(0, weight=1)
 
         # Sentence Silence slider
@@ -817,7 +818,7 @@ class TTRPGVoiceLab(ctk.CTk):
 
         # Effect controls frame - Row 3
         self.controls_frame2 = ctk.CTkFrame(self.main_frame)
-        self.controls_frame2.grid(row=6, column=0, padx=20, pady=(0, 10), sticky="ew")
+        self.controls_frame2.grid(row=5, column=0, padx=20, pady=(0, 10), sticky="ew")
         self.controls_frame2.grid_columnconfigure((0, 1, 2, 3, 4), weight=1)
 
         # Echo/Reverb level slider
@@ -1002,17 +1003,9 @@ class TTRPGVoiceLab(ctk.CTk):
                 text_color="orange"
             )
 
-        # Status bar
-        self.status_label = ctk.CTkLabel(
-            self.main_frame,
-            text="Ready",
-            font=ctk.CTkFont(size=12)
-        )
-        self.status_label.grid(row=7, column=0, padx=20, pady=(0, 10))
-
         # Right sidebar for voice models
         self.voice_sidebar = ctk.CTkFrame(self, width=250, corner_radius=0)
-        self.voice_sidebar.grid(row=0, column=2, rowspan=2, sticky="nsew")
+        self.voice_sidebar.grid(row=0, column=2, rowspan=1, sticky="nsew")
         self.voice_sidebar.grid_rowconfigure(6, weight=1)  # Empty row at bottom expands
 
         # Voice sidebar title
@@ -1122,6 +1115,18 @@ class TTRPGVoiceLab(ctk.CTk):
             hover_color="gray20"
         )
         self.about_btn.grid(row=10, column=0, padx=20, pady=(5, 20), sticky="ew")
+
+        # Status bar at bottom of window
+        status_bar_frame = ctk.CTkFrame(self, height=30, corner_radius=0)
+        status_bar_frame.grid(row=1, column=0, columnspan=3, sticky="ew")
+
+        self.status_label = ctk.CTkLabel(
+            status_bar_frame,
+            text="Ready",
+            font=ctk.CTkFont(size=11),
+            anchor="w"
+        )
+        self.status_label.pack(side="left", padx=10, pady=5)
 
         # Populate voice models (moved to after status_label creation)
         self.voice_models = {}  # Dictionary: display_name -> model_path
