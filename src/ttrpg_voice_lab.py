@@ -786,9 +786,37 @@ class TTRPGVoiceLab(ctk.CTk):
         )
         self.volume_value_label.grid(row=2, column=4, padx=5, pady=(0, 10))
 
-        # Effect controls frame - Row 2
+        # Speech controls frame - Row 2
+        self.controls_frame_speech = ctk.CTkFrame(self.main_frame)
+        self.controls_frame_speech.grid(row=5, column=0, padx=20, pady=(0, 10), sticky="ew")
+        self.controls_frame_speech.grid_columnconfigure(0, weight=1)
+
+        # Sentence Silence slider
+        ctk.CTkLabel(
+            self.controls_frame_speech,
+            text="Sentence Pause:",
+            font=ctk.CTkFont(size=11)
+        ).grid(row=0, column=0, padx=5, pady=(10, 5), sticky="w")
+
+        self.sentence_silence_slider = ctk.CTkSlider(
+            self.controls_frame_speech,
+            from_=0,
+            to=2.0,
+            number_of_steps=40,
+            command=self.update_sentence_silence_label
+        )
+        self.sentence_silence_slider.grid(row=1, column=0, padx=5, pady=(0, 10), sticky="ew")
+        self.sentence_silence_slider.set(0.75)  # Default Piper value
+
+        self.sentence_silence_value_label = ctk.CTkLabel(
+            self.controls_frame_speech,
+            text="0.75s"
+        )
+        self.sentence_silence_value_label.grid(row=2, column=0, padx=5, pady=(0, 10))
+
+        # Effect controls frame - Row 3
         self.controls_frame2 = ctk.CTkFrame(self.main_frame)
-        self.controls_frame2.grid(row=5, column=0, padx=20, pady=(0, 10), sticky="ew")
+        self.controls_frame2.grid(row=6, column=0, padx=20, pady=(0, 10), sticky="ew")
         self.controls_frame2.grid_columnconfigure((0, 1, 2, 3, 4), weight=1)
 
         # Echo/Reverb level slider
@@ -908,7 +936,7 @@ class TTRPGVoiceLab(ctk.CTk):
 
         # Action buttons
         self.button_frame = ctk.CTkFrame(self.main_frame)
-        self.button_frame.grid(row=6, column=0, padx=20, pady=20, sticky="ew")
+        self.button_frame.grid(row=7, column=0, padx=20, pady=20, sticky="ew")
         self.button_frame.grid_columnconfigure((0, 1), weight=1)
 
         self.preview_button = ctk.CTkButton(
@@ -1085,6 +1113,10 @@ class TTRPGVoiceLab(ctk.CTk):
     def update_speech_rate_label(self, value):
         """Update speech rate slider label"""
         self.speech_rate_value_label.configure(text=f"{float(value):.1f}x")
+
+    def update_sentence_silence_label(self, value):
+        """Update sentence silence slider label"""
+        self.sentence_silence_value_label.configure(text=f"{float(value):.2f}s")
 
     def update_pitch_label(self, value):
         """Update pitch slider label"""
@@ -1440,11 +1472,15 @@ Voice models are NOT distributed with this application.
             # Piper uses length_scale which is inverse of speed
             length_scale = 1.0 / speech_rate
 
+            # Get sentence silence from slider
+            sentence_silence = self.sentence_silence_slider.get()
+
             cmd = [
                 str(piper_exe),
                 '--model', model_path,
                 '--output_file', str(temp_filename),
-                '--length_scale', str(length_scale)
+                '--length_scale', str(length_scale),
+                '--sentence-silence', str(sentence_silence)
             ]
 
             # Run piper with text input
