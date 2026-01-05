@@ -285,17 +285,18 @@
                     <li>Click the <strong>⚙️ Settings</strong> icon (bottom left)</li>
                     <li>Go to <strong>Voice & Video</strong></li>
                     <li>Under <strong>Input Device</strong>, select <strong>"Default"</strong></li>
-                    <li>Scroll down and <strong>disable</strong> these options:
-                        <ul>
-                            <li>❌ Automatically determine input sensitivity</li>
-                            <li>✅ Use Push-to-Talk instead (optional, but recommended)</li>
-                        </ul>
-                    </li>
+                    <li>Under <strong>Input Mode</strong>, select <strong>"Voice Activity"</strong></li>
+                    <li>Optionally <strong>disable "Automatically determine input sensitivity"</strong> if TTS audio gets cut off at the beginning</li>
                 </ol>
 
                 <div class="warning">
                     <h3>🎯 Why "Default" Input?</h3>
                     <p>Setting Discord to "Default" allows The Artificer to automatically switch between your real microphone and the virtual cable. This is what makes the "Send to Discord" button work seamlessly!</p>
+                </div>
+
+                <div class="warning">
+                    <h3>⚠️ Push-to-Talk Users</h3>
+                    <p>If you use <strong>Push-to-Talk (PTT)</strong> mode, you must <strong>hold down your PTT key</strong> while the TTS audio plays for Discord to transmit it. The "Send to Discord" feature works best with <strong>Voice Activity</strong> mode for fully automatic operation.</p>
                 </div>
 
                 <h3>Testing Your Setup:</h3>
@@ -358,7 +359,8 @@
                 <ol>
                     <li>Check Discord → Settings → Voice & Video</li>
                     <li>Ensure <strong>Input Device</strong> is set to <strong>"Default"</strong></li>
-                    <li>Disable "Automatically determine input sensitivity"</li>
+                    <li>Ensure <strong>Input Mode</strong> is set to <strong>"Voice Activity"</strong> (not Push-to-Talk)</li>
+                    <li>If audio is cut off at the beginning, disable "Automatically determine input sensitivity"</li>
                     <li>Try leaving and rejoining the voice channel</li>
                 </ol>
 
