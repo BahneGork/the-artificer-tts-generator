@@ -1050,12 +1050,30 @@ class TTRPGVoiceLab(ctk.CTk):
         )
         self.download_voices_btn.grid(row=3, column=0, padx=20, pady=10, sticky="ew")
 
+        # Currently selected voice label
+        ctk.CTkLabel(
+            self.voice_sidebar,
+            text="Currently Selected:",
+            font=ctk.CTkFont(size=12, weight="bold")
+        ).grid(row=4, column=0, padx=20, pady=(20, 5), sticky="w")
+
+        self.selected_voice_label = ctk.CTkLabel(
+            self.voice_sidebar,
+            text="No voice selected",
+            font=ctk.CTkFont(size=11),
+            wraplength=210,
+            anchor="w",
+            justify="left",
+            text_color="gray70"
+        )
+        self.selected_voice_label.grid(row=5, column=0, padx=20, pady=(0, 10), sticky="w")
+
         # Voice description label
         ctk.CTkLabel(
             self.voice_sidebar,
             text="About This Voice:",
             font=ctk.CTkFont(size=12, weight="bold")
-        ).grid(row=4, column=0, padx=20, pady=(10, 5), sticky="w")
+        ).grid(row=6, column=0, padx=20, pady=(10, 5), sticky="w")
 
         # Voice description text (wrapped)
         self.voice_description_label = ctk.CTkLabel(
@@ -1066,7 +1084,7 @@ class TTRPGVoiceLab(ctk.CTk):
             anchor="w",
             justify="left"
         )
-        self.voice_description_label.grid(row=5, column=0, padx=20, pady=(0, 10), sticky="nw")
+        self.voice_description_label.grid(row=7, column=0, padx=20, pady=(0, 10), sticky="nw")
 
         # Emergency reset audio button (Discord integration)
         self.reset_audio_btn = ctk.CTkButton(
@@ -1077,7 +1095,7 @@ class TTRPGVoiceLab(ctk.CTk):
             fg_color="#ED4245",  # Discord red
             hover_color="#C03537"
         )
-        self.reset_audio_btn.grid(row=7, column=0, padx=20, pady=(20, 5), sticky="ew")
+        self.reset_audio_btn.grid(row=8, column=0, padx=20, pady=(20, 5), sticky="ew")
 
         # Show/hide reset button based on pycaw availability
         if not PYCAW_AVAILABLE:
@@ -1092,7 +1110,7 @@ class TTRPGVoiceLab(ctk.CTk):
             fg_color="#5865F2",
             hover_color="#4752C4"
         )
-        self.discord_guide_btn.grid(row=8, column=0, padx=20, pady=(5, 5), sticky="ew")
+        self.discord_guide_btn.grid(row=9, column=0, padx=20, pady=(5, 5), sticky="ew")
 
         # About / License button
         self.about_btn = ctk.CTkButton(
@@ -1103,7 +1121,7 @@ class TTRPGVoiceLab(ctk.CTk):
             fg_color="gray30",
             hover_color="gray20"
         )
-        self.about_btn.grid(row=9, column=0, padx=20, pady=(5, 20), sticky="ew")
+        self.about_btn.grid(row=10, column=0, padx=20, pady=(5, 20), sticky="ew")
 
         # Populate voice models (moved to after status_label creation)
         self.voice_models = {}  # Dictionary: display_name -> model_path
@@ -1209,7 +1227,9 @@ class TTRPGVoiceLab(ctk.CTk):
     def on_voice_selected(self, choice):
         """Handle voice model selection"""
         if choice in self.voice_models:
-            self.status_label.configure(text=f"Selected: {choice}")
+            # Update selected voice label in sidebar
+            self.selected_voice_label.configure(text=choice)
+            self.status_label.configure(text="Ready")
 
             # Update voice description
             model_path = self.voice_models[choice]
