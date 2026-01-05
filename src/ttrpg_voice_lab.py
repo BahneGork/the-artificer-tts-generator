@@ -1484,13 +1484,21 @@ Voice models are NOT distributed with this application.
             ]
 
             # Run piper with text input
+            # Hide console window on Windows
+            startupinfo = None
+            if sys.platform == 'win32':
+                startupinfo = subprocess.STARTUPINFO()
+                startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+                startupinfo.wShowWindow = subprocess.SW_HIDE
+
             process = subprocess.Popen(
                 cmd,
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 text=True,
-                env=env
+                env=env,
+                startupinfo=startupinfo
             )
 
             stdout, stderr = process.communicate(input=text)
