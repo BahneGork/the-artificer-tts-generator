@@ -45,6 +45,13 @@ if exist docs (
     echo   - Documentation copied
 )
 
+if exist presets (
+    xcopy presets dist\TTRPGVoiceLab\presets\ /E /I /Y >nul
+    echo   - Presets copied
+) else (
+    echo   WARNING: No presets folder found!
+)
+
 REM Bundle source code for GPL compliance
 echo   - Bundling source code for GPL compliance...
 if not exist dist\TTRPGVoiceLab\source mkdir dist\TTRPGVoiceLab\source
