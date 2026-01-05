@@ -2,6 +2,24 @@
 
 This guide explains how to build a professional Windows installer for The Artificer - TTS Voice Generator.
 
+## Choosing an Installer System
+
+The Artificer supports **two installer options**:
+
+### Option 1: NSIS (Recommended for Commercial Use)
+- **License**: zlib/libpng (truly free for commercial use)
+- **Build Script**: `build-installer-nsis.bat`
+- **Documentation**: See [NSIS_BUILD_GUIDE.md](NSIS_BUILD_GUIDE.md)
+- **Advantages**: No licensing concerns, modern UI, widely trusted
+
+### Option 2: Inno Setup (This Guide)
+- **License**: Free for commercial use (with conditions)
+- **Build Script**: `build-installer.bat`
+- **Documentation**: This file
+- **Advantages**: Simple syntax, familiar to many developers
+
+**Both produce professional, fully-functional installers.** Choose based on your preference.
+
 ## Prerequisites
 
 ### 1. Install Python Dependencies
@@ -54,11 +72,18 @@ pyinstaller ttrpg_voice_lab.spec
 # Copy models
 xcopy models dist\TTRPGVoiceLab\models\ /E /I /Y
 
-# Copy docs (optional but recommended)
+# Copy presets
+xcopy presets dist\TTRPGVoiceLab\presets\ /E /I /Y
+
+# Copy docs (required for GPL compliance)
 xcopy docs dist\TTRPGVoiceLab\docs\ /E /I /Y
 
-# Copy license and readme
+# Copy source code (REQUIRED for GPL v3 compliance)
+xcopy src dist\TTRPGVoiceLab\source\ /E /I /Y
+
+# Copy license files (REQUIRED for GPL v3 compliance)
 copy LICENSE dist\TTRPGVoiceLab\
+copy THIRD_PARTY_LICENSES.txt dist\TTRPGVoiceLab\
 copy README.md dist\TTRPGVoiceLab\
 ```
 
@@ -83,13 +108,37 @@ installer_output/TheArtificer-TTS-Setup-1.0.0.exe
 
 When users run the installer:
 
-1. **License Agreement** - Shows MIT license
+1. **License Agreement** - Shows GNU GPL v3 license
 2. **Installation Location** - Defaults to `C:\Program Files\The Artificer - TTS Voice Generator\`
 3. **Start Menu Shortcuts** - Creates shortcuts in Start Menu
 4. **Desktop Icon** - Optional (user can choose)
-5. **File Installation** - Copies all files to installation directory
+5. **File Installation** - Copies all files to installation directory (including source code for GPL compliance)
 6. **Add/Remove Programs** - Registers for easy uninstallation
 7. **Launch Option** - Can launch app after installation
+
+## GPL v3 Compliance Requirements
+
+⚠️ **IMPORTANT**: The Artificer is licensed under GNU GPL v3 due to dependencies (Pedalboard, espeak-ng).
+
+**All distributions MUST include:**
+1. ✅ Complete source code (`source/` folder)
+2. ✅ LICENSE file (GNU GPL v3)
+3. ✅ THIRD_PARTY_LICENSES.txt (dependency attributions)
+4. ✅ Instructions for obtaining source (SOURCE_README.txt included)
+
+The build scripts (`build-installer.bat` and `build-installer-nsis.bat`) automatically bundle all required files.
+
+**You CAN:**
+- ✅ Sell this software commercially
+- ✅ Charge for distribution or support
+- ✅ Modify and redistribute
+
+**You MUST:**
+- ⚠️ Provide source code to recipients
+- ⚠️ Include GPL v3 license text
+- ⚠️ Include third-party license attributions
+
+See [LICENSE](../LICENSE) for full GPL v3 text.
 
 ## Customizing the Installer
 
