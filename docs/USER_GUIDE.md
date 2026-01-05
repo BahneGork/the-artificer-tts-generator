@@ -2,222 +2,446 @@
 
 ## Overview
 
-The Artificer is a desktop application designed for TTRPG content creators to generate high-quality NPC voices for pre-recorded sessions, actual plays, and video content.
+The Artificer is a desktop application designed for TTRPG content creators to generate high-quality NPC voices for pre-recorded sessions, actual plays, and video content. With 12 voice presets, 11 audio controls, multi-language support, and Discord integration, you can create distinctive character voices without cloud dependencies or subscription fees.
 
 ## Key Features
 
-### Voice Presets
+- **🎭 12 Voice Presets** - From Clockwork constructs to Ancient Dragons
+- **🎚️ 11 Audio Controls** - Complete creative control over every voice
+- **🌍 30+ Languages** - Danish, German, Spanish, French, Japanese, and more
+- **🎙️ Discord Integration** - Send voices directly to Discord voice chat
+- **🔊 Preview & Export** - Test voices instantly, export high-quality WAV files
+- **📥 Voice Downloader** - Browse and download 400+ voice models
+- **🖥️ Offline** - Runs completely locally, no internet required
 
-The application includes several pre-configured voice profiles:
+## Getting Started
 
-1. **Warforged**: Mechanical construct with metallic resonance
-   - Ring modulation at 50Hz
-   - Distortion for mechanical quality
-   - Perfect for construct NPCs
+### Interface Overview
 
-2. **Ancient Dragon**: Deep, resonant voice with cavernous reverb
-   - Pitch shifted down 4 semitones
-   - Heavy reverb for otherworldly presence
-   - Ideal for dragons, ancient beings, deities
+**Left Sidebar:**
+- Voice preset buttons (12 presets)
+- Download Voice Models button
+- Emergency Reset Audio button (Discord feature)
+- Discord Setup Guide button
+- About/License button
 
-3. **Ghostly Apparition**: Ethereal, otherworldly voice
-   - Chorus effect for multiple voices
-   - Full wet reverb
-   - Low-pass filter for spectral quality
-   - Great for ghosts, spirits, undead
+**Main Area:**
+- Text input box (type your NPC dialogue here)
+- 11 audio control sliders (3 rows)
+- Preview and Export buttons
+- Send to Discord button
+- Status label (shows generation progress)
 
-4. **Demon Lord**: Dark, distorted voice
-   - Heavy distortion and pitch shift
-   - Moderate reverb
-   - Perfect for demons, devils, villains
-
-5. **Goblin**: High-pitched, nasally creature voice
-   - Pitch shifted up
-   - Light processing
-   - Ideal for small creatures, goblins, kobolds
+**Right Sidebar:**
+- Voice model selector (choose language/voice)
+- Voice description
+- Preset information
 
 ## Using the Application
 
-### Step 1: Select a Preset
+### Basic Workflow
 
-Click on any preset in the left sidebar to load its default settings. The preset name and description will appear at the top of the main area.
+#### Step 1: Select a Voice Model
 
-### Step 2: Enter Dialogue
+Click the **voice dropdown** in the right sidebar to select a language and voice:
+- English (US) - lessac (medium) - Default
+- Spanish, French, German, Japanese, etc.
+- Download more voices using the "Download Voice Models" button
 
-Type or paste your NPC's dialogue in the text box. The application works best with:
-- Single sentences or short paragraphs
-- Natural punctuation for pacing
-- Text without special characters
+**See [MULTILANGUAGE_GUIDE.md](MULTILANGUAGE_GUIDE.md) for language options.**
 
-**Tips:**
-- Use commas for brief pauses
-- Use periods for longer pauses
-- Avoid unusual formatting
+#### Step 2: Choose a Preset (Optional)
 
-### Step 3: Customize Effects
+Click a preset button in the left sidebar to load pre-configured settings:
 
-Use the three sliders to fine-tune the voice:
+1. **Clockwork** - Mechanical construct with metallic resonance
+2. **Ancient Dragon** - Deep, slow voice with cavernous reverb
+3. **Ghostly Apparition** - Ethereal, otherworldly with heavy effects
+4. **Demon Lord** - Dark, distorted voice with heavy processing
+5. **Goblin** - Fast, high-pitched, nasally creature voice
+6. **Orc Warrior** - Gruff, aggressive with distortion
+7. **Lich** - Ancient undead with hollow echo and chorus
+8. **Fey Creature** - Magical, whimsical with shimmer
+9. **Giant** - Enormous, slow booming voice
+10. **Elemental (Fire)** - Crackling, intense with distortion
+11. **Vampire** - Seductive, menacing with slight echo
+12. **Construct Guardian** - Heavy mechanical with deep tone
 
-#### Pitch Shift
-- Range: -12 to +12 semitones
-- **Lower values** (-4 to -12): Deeper, more menacing voices
-- **Higher values** (+4 to +12): Higher-pitched, creature-like voices
-- **0**: Natural voice pitch
+**Or start from scratch** by adjusting sliders manually.
 
-#### Mechanical Frequency
-- Range: 0 to 200 Hz
-- **0 Hz**: No mechanical effect
-- **30-60 Hz**: Subtle robotic quality
-- **100+ Hz**: Heavy mechanical/radio effect
-- Creates a "ring modulator" effect for constructs and mechanical beings
+#### Step 3: Enter Dialogue
 
-#### Echo Level
-- Range: 0% to 100%
-- **0-20%**: Minimal reverb, intimate setting
-- **30-50%**: Moderate echo, natural room
-- **60-100%**: Heavy reverb, cavernous or otherworldly
+Type your NPC's dialogue in the text box. The application works best with:
+- Natural, conversational text
+- Proper punctuation (periods, commas)
+- Sentences or short paragraphs
 
-### Step 4: Preview
+**Important:** See [TEXT_CONTROL_GUIDE.md](TEXT_CONTROL_GUIDE.md) for what text formatting actually works with Piper TTS.
 
-Click the **🔊 Preview** button to:
-1. Generate the TTS audio (may take 2-5 seconds)
+**Text Tips:**
+- ✅ "Stop. Listen carefully." - Works naturally
+- ❌ "Stop... ... listen." - Doesn't create extra pauses
+- ✅ Use Sentence Pause slider instead of punctuation tricks
+
+#### Step 4: Adjust Audio Controls
+
+Use the 11 sliders to customize the voice:
+
+**Row 1 - Speech Controls:**
+
+1. **Speech Rate** (0.5x to 2.0x)
+   - Controls speaking speed
+   - 0.5x = Very slow, dramatic
+   - 1.0x = Normal speed
+   - 2.0x = Very fast, frantic
+
+2. **Pitch Shift** (-12 to +12 semitones)
+   - -12 to -6 = Deep, menacing voices
+   - 0 = Natural pitch
+   - +6 to +12 = High-pitched creatures
+
+3. **Distortion** (0 to 20 dB)
+   - Adds grit and aggression
+   - 0 dB = Clean
+   - 10 dB = Moderate grit
+   - 20 dB = Heavy distortion
+
+4. **Mechanical** (0 to 200 Hz)
+   - Ring modulator effect
+   - 0 Hz = Off
+   - 50 Hz = Robotic quality
+   - 100+ Hz = Heavy mechanical
+
+5. **Volume** (0 to +12 dB)
+   - Boost output volume
+   - 0 dB = Quiet
+   - +3 dB = Normal (default)
+   - +12 dB = Very loud
+
+**Row 2 - Speech Timing:**
+
+6. **Sentence Pause** (0s to 2.0s)
+   - Controls pause between sentences
+   - 0s = No pause, rapid speech
+   - 0.75s = Natural (default)
+   - 2.0s = Dramatic, slow pacing
+
+**Row 3 - Audio Effects:**
+
+7. **Echo Level** (0% to 100%)
+   - Reverb/echo amount
+   - 0% = Dry, intimate
+   - 30% = Natural room
+   - 100% = Cavernous, otherworldly
+
+8. **Chorus Depth** (0% to 100%)
+   - Ethereal, layered effect
+   - 0% = Off
+   - 50% = Moderate shimmer
+   - 100% = Heavy otherworldly effect
+
+9. **Delay Time** (0 to 500ms)
+   - Distinct echo delay
+   - 0ms = Off
+   - 200ms = Moderate echo
+   - 500ms = Long echo tail
+
+10. **Low-pass Filter** (1000 to 8000 Hz)
+    - Removes high frequencies
+    - 1000 Hz = Very muffled
+    - 8000 Hz = Off (default)
+    - Creates distant, underwater sound
+
+11. **High-pass Filter** (50 to 500 Hz)
+    - Removes low frequencies
+    - 50 Hz = Off (default)
+    - 200 Hz = Tinny, radio effect
+    - 500 Hz = Extreme tinny sound
+
+#### Step 5: Preview
+
+Click **🔊 Preview** to:
+1. Generate TTS audio (2-10 seconds)
 2. Apply all effects
-3. Play the audio through your speakers
+3. Play through your speakers
 
-**Note:** The preview button will be disabled during generation to prevent multiple simultaneous processes.
+The preview button disables during generation to prevent overlapping processes.
 
-### Step 5: Export
+#### Step 6: Export
 
-Click the **💾 Export WAV** button to:
-1. Choose a save location
-2. Generate the final high-quality audio
-3. Save as a .WAV file
+Click **💾 Export WAV** to:
+1. Choose save location
+2. Generate final audio
+3. Save as high-quality .WAV file
 
-**Important:** The exported file is a digital render, not a recording. This means:
-- No background noise
-- Crystal-clear quality
-- Consistent output regardless of system performance
-- Perfect for video editing
+**Export Quality:**
+- Sample Rate: 22050 Hz
+- Bit Depth: 16-bit
+- Channels: Mono
+- Format: WAV (uncompressed)
 
-## Advanced Tips
+The exported file is a **digital render**, not a recording - crystal clear with no background noise.
+
+## Discord Integration
+
+### Send Voices to Discord
+
+The **🎙️ Send to Discord** button lets you play NPC voices directly into Discord voice chat during live TTRPG sessions.
+
+**Requirements:**
+- VB-CABLE virtual audio cable (free)
+- Discord input set to "Default"
+
+**How to Use:**
+
+1. Click **📖 Discord Setup Guide** in the sidebar for complete setup instructions
+2. Join a Discord voice channel
+3. Type your NPC dialogue and adjust settings
+4. Click **🎙️ Send to Discord**
+5. The app automatically switches to virtual cable, plays audio, and restores your mic
+
+**Controls:**
+- **⏹️ Cancel & Restore Mic** - Stops playback immediately
+- **🔧 Reset Audio Device** - Emergency mic restore if something goes wrong
+
+**See [vb-cable-setup.html](vb-cable-setup.html) for detailed setup guide.**
+
+## Multi-Language Support
+
+The Artificer supports **30+ languages** including:
+- 🇺🇸 English (US/UK)
+- 🇪🇸 Spanish
+- 🇫🇷 French
+- 🇩🇪 German
+- 🇯🇵 Japanese
+- 🇮🇹 Italian
+- 🇵🇹 Portuguese
+- 🇷🇺 Russian
+- And many more!
+
+**To use different languages:**
+
+1. Click **Download Voice Models** button
+2. Browse available voices by language
+3. Select voices to download
+4. Click **Download Selected Voices**
+5. Use the voice dropdown to select downloaded voices
+
+**See [MULTILANGUAGE_GUIDE.md](MULTILANGUAGE_GUIDE.md) for complete language guide.**
+
+## Advanced Techniques
 
 ### Creating Custom Voice Profiles
 
-1. Load a preset that's close to what you want
-2. Adjust the sliders to taste
-3. Make note of your settings for future use
-
-### Batch Production Workflow
-
-For multiple NPCs in a scene:
-1. Create a naming convention (e.g., `scene01_npc_warforged.wav`)
-2. Use the same preset for consistency
-3. Export all dialogue
-4. Import into your video editor
+1. Start with a preset that's close to your vision
+2. Adjust sliders to taste
+3. Note your settings for future use
+4. Consider creating a preset file (see QUICK_REFERENCE.md)
 
 ### Effect Combinations
 
 **Undead/Spectral:**
-- Pitch: -2 to +2
-- Mechanical: 0 Hz
-- Echo: 80-100%
+- Speech Rate: 0.8x (slower)
+- Pitch: 0 to -2
+- Sentence Pause: 1.2s (dramatic)
+- Echo: 80%
+- Chorus: 60%
+- Low-pass: 4000 Hz (distant)
 
 **Robot/AI:**
-- Pitch: 0 to -2
-- Mechanical: 40-80 Hz
-- Echo: 10-20%
+- Speech Rate: 1.0x
+- Pitch: -2
+- Mechanical: 50 Hz
+- Echo: 10%
+- High-pass: 150 Hz (tinny)
 
-**Monster/Creature:**
-- Pitch: -6 to +6 (depending on size)
-- Mechanical: 0 Hz
-- Echo: 20-40%
+**Monstrous Creature:**
+- Speech Rate: 0.7x (menacing)
+- Pitch: -6 to -8 (size-dependent)
+- Distortion: 8 dB (growl)
+- Echo: 30%
 
-**Deity/Cosmic Entity:**
-- Pitch: -4 to -8
-- Mechanical: 0 Hz
-- Echo: 90-100%
+**Ancient Deity:**
+- Speech Rate: 0.6x (slow, deliberate)
+- Pitch: -6
+- Sentence Pause: 1.8s
+- Echo: 100%
+- Delay: 300ms
+- Chorus: 40%
 
-**Elemental:**
-- Pitch: -3 to +3
-- Mechanical: 15-30 Hz (for crackling effect)
-- Echo: 60-80%
+**Frantic Goblin:**
+- Speech Rate: 1.6x (fast)
+- Pitch: +8
+- Sentence Pause: 0.2s
+- Mechanical: 80 Hz (nasally)
+- Distortion: 3 dB
 
-## Technical Details
+### Batch Production Workflow
 
-### Audio Quality
+For multiple NPCs in a scene:
 
-- **Sample Rate**: 22050 Hz
-- **Bit Depth**: 16-bit
-- **Channels**: Mono
-- **Format**: WAV (uncompressed)
+1. Create naming convention: `scene01_npc01_warforged.wav`
+2. Use consistent presets for character continuity
+3. Export all dialogue sequentially
+4. Import into video editor
+5. Sync with video content
 
-### Processing Pipeline
+### Save Your Settings
 
-1. **TTS Generation**: Piper generates base speech
-2. **Pitch Shift**: Applied first for tonal changes
-3. **Ring Modulation**: Creates mechanical effects
-4. **Distortion**: Adds grit and aggression
-5. **Chorus**: Creates ethereal, layered sound
-6. **Low-Pass Filter**: Removes high frequencies for spectral quality
-7. **Reverb**: Final spatial processing
+**Method 1: Manual Notes**
+- Write down slider values for favorite combinations
+- Create your own reference sheet
 
-### File Locations
-
-- **Presets**: `presets/voice_presets.json`
-- **Voice Models**: `models/`
-- **Exports**: `exports/` (default save location)
-- **Temporary Files**: Automatically cleaned up after use
+**Method 2: Create Custom Presets**
+- Edit `presets/voice_presets.json`
+- Add new preset with your values
+- See [QUICK_REFERENCE.md](QUICK_REFERENCE.md) for format
 
 ## Troubleshooting
 
-### Audio Sounds Distorted
-- Reduce the Mechanical Frequency
-- Lower the pitch shift amount
-- Decrease distortion drive in preset
+### Common Issues
 
-### Voice Sounds Too Robotic
+**No Voice Models Found**
+- Download a voice model using "Download Voice Models" button
+- Or manually place .onnx files in `models/` folder
+- Restart the application
+
+**Audio Sounds Distorted**
+- Reduce Distortion slider
+- Lower Mechanical Frequency
+- Decrease Volume slider
+- Reduce extreme pitch shifts
+
+**Voice Sounds Too Robotic**
 - Decrease Mechanical Frequency
-- Add slight pitch variation in your text delivery
-- Reduce distortion
+- Reduce Distortion
+- Increase natural variation in text
 
-### Not Enough Effect
+**Not Enough Effect**
 - Increase Echo Level
+- Add Chorus effect
+- Increase Delay Time
 - Adjust pitch shift more dramatically
-- Try a different base preset
 
-### Slow Generation
-- Normal generation takes 2-10 seconds depending on text length
-- Longer text = longer processing time
-- This is expected and ensures quality
+**Slow Generation**
+- Normal: 2-10 seconds per generation
+- Longer text = longer processing
+- This ensures quality output
+
+**Discord Integration Not Working**
+- Check VB-CABLE is installed and system restarted
+- Verify Discord input is set to "Default"
+- Use **🔧 Reset Audio Device** if mic stuck
+- See [vb-cable-setup.html](vb-cable-setup.html)
+
+**Window Too Small / UI Cutoff**
+- Window size: 1280x1280 (square)
+- All UI elements should be visible
+- If not, try maximizing window
+
+## Integration with Tools
+
+### Video Editing
+
+Exported WAV files work with all major editors:
+- **DaVinci Resolve**
+- **Adobe Premiere Pro**
+- **Final Cut Pro**
+- **Shotcut**
+- **HitFilm Express**
+
+### Audio Editing
+
+Further process exports with:
+- **Audacity** (free)
+- **Adobe Audition**
+- **Reaper**
+- **FL Studio**
+
+### Streaming/Recording
+
+Use exports with:
+- **OBS Studio**
+- **Streamlabs**
+- **XSplit**
+
+### Discord (Live Sessions)
+
+Use **Send to Discord** feature for:
+- Live TTRPG sessions
+- NPC voice acting in real-time
+- Immersive storytelling
 
 ## Best Practices
 
 1. **Test First**: Always preview before exporting
-2. **Save Settings**: Note your favorite combinations
-3. **Batch Similar Content**: Use same preset for related NPCs
-4. **Name Files Clearly**: Use descriptive filenames
-5. **Keep Originals**: Save unprocessed audio if you might want to re-process
+2. **Start Simple**: Use presets as starting points
+3. **Save Favorites**: Note combinations that work
+4. **Batch Similar**: Use same preset for related NPCs
+5. **Name Clearly**: Use descriptive filenames
+6. **Read TEXT_CONTROL_GUIDE.md**: Understand what works with text input
+7. **Explore Languages**: Try different voice models
+8. **Combine Effects**: Layer multiple sliders for unique voices
 
-## Integration with Video Editing
+## Keyboard Shortcuts
 
-The exported WAV files work with all major video editors:
-- **DaVinci Resolve**
-- **Adobe Premiere Pro**
-- **Final Cut Pro**
-- **OBS Studio**
-- **Audacity** (for further processing)
+Currently, all controls are mouse-based. Keyboard shortcuts may be added in future versions.
 
-Simply import the WAV files into your timeline and sync with your video content.
+## File Locations
 
-## Future Enhancements
+- **Presets**: `presets/voice_presets.json`
+- **Voice Models**: `models/` (next to executable)
+- **Exports**: `exports/` (default save location)
+- **Documentation**: `docs/`
+- **Source Code**: `source/` (bundled for GPL compliance)
+- **Temporary Files**: Automatically cleaned up
 
-Potential features for future versions:
-- Custom preset saving
-- Batch text processing
-- Additional voice models
-- Real-time preview
-- Effect presets library
-- MIDI controller support
+## Technical Details
+
+### Audio Processing Pipeline
+
+1. **TTS Generation** - Piper generates base speech
+2. **Speech Rate** - Applied via Piper's length_scale
+3. **Sentence Pause** - Applied via Piper's --sentence-silence
+4. **Pitch Shift** - Applied first for tonal changes
+5. **Ring Modulation** - Creates mechanical effects
+6. **Distortion** - Adds grit and aggression
+7. **High-pass Filter** - Removes low frequencies
+8. **Low-pass Filter** - Removes high frequencies
+9. **Chorus** - Creates ethereal, layered sound
+10. **Delay** - Adds distinct echo
+11. **Reverb** - Final spatial processing
+12. **Volume Boost** - Final amplification
+
+### System Requirements
+
+**Minimum:**
+- Windows 10 or Linux
+- 4GB RAM
+- 500MB disk space (+ voice models)
+
+**Recommended:**
+- Windows 10/11 or Ubuntu 20.04+
+- 8GB RAM
+- 2GB disk space (with multiple models)
+
+## Getting Help
+
+**Documentation:**
+- [Setup Guide](SETUP.md) - Installation and troubleshooting
+- [Text Control Guide](TEXT_CONTROL_GUIDE.md) - Text input tips
+- [Multi-Language Guide](MULTILANGUAGE_GUIDE.md) - Language support
+- [Quick Reference](QUICK_REFERENCE.md) - Preset creation
+- [Discord Setup](vb-cable-setup.html) - VB-CABLE installation
+
+**Community:**
+- GitHub Issues: Report bugs and request features
+- GitHub Discussions: Share presets and tips
+
+**License:**
+- The Artificer is licensed under GNU GPL v3
+- You can use it commercially, modify it, and redistribute it
+- See About/License dialog in the app for details
 
 ---
 
