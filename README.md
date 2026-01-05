@@ -72,16 +72,19 @@ python src/ttrpg_voice_lab.py
 11. **Vampire** - Seductive, menacing voice with slight echo
 12. **Construct Guardian** - Heavy mechanical voice with deep tone
 
-### Full Audio Control (10 Sliders)
+### Full Audio Control (11 Sliders)
 
-**Row 1:**
+**Row 1 - Speech Controls:**
 - **Speech Rate**: 0.5x to 2.0x (speed of talking)
 - **Pitch Shift**: -12 to +12 semitones
 - **Distortion**: 0 to 20 dB (grit and aggression)
 - **Mechanical Frequency**: 0 to 200 Hz (ring modulator)
 - **Volume Boost**: 0 to +12 dB
 
-**Row 2:**
+**Row 2 - Speech Timing:**
+- **Sentence Pause**: 0s to 2.0s (pause length between sentences)
+
+**Row 3 - Audio Effects:**
 - **Echo Level**: 0% to 100% (reverb wetness)
 - **Chorus Depth**: 0% to 100% (ethereal effect)
 - **Delay Time**: 0 to 500ms (distinct echo)
@@ -171,6 +174,9 @@ the-artificer-tts-generator/
 
 - **[Setup Guide](docs/SETUP.md)** - Installation, troubleshooting, and building
 - **[User Guide](docs/USER_GUIDE.md)** - Complete usage instructions and tips
+- **[Text Control Guide](docs/TEXT_CONTROL_GUIDE.md)** - What works and doesn't work for text input
+- **[Multi-Language Guide](docs/MULTILANGUAGE_GUIDE.md)** - Using voices in 30+ languages
+- **[Discord Setup Guide](docs/vb-cable-setup.html)** - Send voices directly to Discord
 
 ## Why Local Processing?
 
