@@ -1059,14 +1059,14 @@ class TTRPGVoiceLab(ctk.CTk):
             justify="left",
             text_color="gray70"
         )
-        self.selected_voice_label.grid(row=5, column=0, padx=20, pady=(0, 10), sticky="w")
+        self.selected_voice_label.grid(row=5, column=0, padx=20, pady=(0, 5), sticky="w")
 
         # Voice description label
         ctk.CTkLabel(
             self.voice_sidebar,
             text="About This Voice:",
             font=ctk.CTkFont(size=12, weight="bold")
-        ).grid(row=6, column=0, padx=20, pady=(10, 5), sticky="w")
+        ).grid(row=6, column=0, padx=20, pady=(5, 5), sticky="w")
 
         # Voice description text (wrapped)
         self.voice_description_label = ctk.CTkLabel(
