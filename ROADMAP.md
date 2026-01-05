@@ -56,11 +56,6 @@ This document outlines planned features and improvements for The Artificer.
   - Timeline-based editing
   - Export complete scenes
 
-- [ ] **Voice Training** - Train custom voice models (if feasible)
-  - Record voice samples
-  - Fine-tune Piper models
-  - Share custom models
-
 - [ ] **Plugin System** - Extend functionality with plugins
   - Custom effects
   - Custom export formats
