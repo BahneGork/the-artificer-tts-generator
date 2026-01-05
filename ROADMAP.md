@@ -31,23 +31,6 @@ This document outlines planned features and improvements for The Artificer.
   - Option to normalize all exports to consistent volume
   - Peak limiter to prevent clipping
 
-### Low Priority
-- [ ] **Real-time Preview** - Update preview as sliders are adjusted
-  - Toggle option (may impact performance)
-  - Debounced updates to avoid too many generations
-
-- [ ] **MIDI Controller Support** - Control sliders with MIDI hardware
-  - Map MIDI controls to sliders
-  - Save MIDI mappings
-
-- [ ] **Effect Preset Library** - Share effect combinations
-  - Community preset repository
-  - Import/export preset packs
-
-- [ ] **Waveform Visualization** - Show audio waveform
-  - Visual representation of generated audio
-  - Helps identify clipping or issues
-
 ## Version 2.0.0 (Future)
 
 ### Major Features
