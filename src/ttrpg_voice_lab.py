@@ -514,7 +514,7 @@ class TTRPGVoiceLab(ctk.CTk):
 
         # Window configuration
         self.title("The Artificer - TTS Voice Generator")
-        self.geometry("1280x700")
+        self.geometry("1280x800")
         self.minsize(1280, 700)  # Set minimum window size
 
         # Initialize pygame mixer for audio playback (if available)
@@ -534,11 +534,8 @@ class TTRPGVoiceLab(ctk.CTk):
         # Paths - handle both development and PyInstaller frozen app
         if getattr(sys, 'frozen', False):
             # Running as compiled executable
-            # PyInstaller creates a temp folder and stores path in _MEIPASS
-            if hasattr(sys, '_MEIPASS'):
-                self.base_dir = Path(sys._MEIPASS)
-            else:
-                self.base_dir = Path(sys.executable).parent
+            # For PyInstaller onedir builds, models/presets are next to the EXE
+            self.base_dir = Path(sys.executable).parent
         else:
             # Running as script
             self.base_dir = Path(__file__).parent.parent
@@ -571,7 +568,7 @@ class TTRPGVoiceLab(ctk.CTk):
         self.update()  # Full update instead of just idletasks
 
         # Force geometry recalculation
-        self.geometry("1280x700")
+        self.geometry("1280x800")
         self.update_idletasks()
 
         # Check for Piper model
