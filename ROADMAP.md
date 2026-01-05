@@ -17,16 +17,6 @@ This document outlines planned features and improvements for The Artificer.
   - Auto-generate filenames from text content
   - Progress bar for batch operations
 
-- [ ] **Keyboard Shortcuts** - Add keyboard shortcuts for common operations
-  - Ctrl+P: Preview
-  - Ctrl+E: Export
-  - Ctrl+D: Send to Discord
-  - Ctrl+S: Save custom preset
-
-- [ ] **Recent Files List** - Quick access to recently exported files
-  - Show last 10 exports
-  - Quick re-export with same settings
-
 - [ ] **Volume Normalization** - Auto-normalize output volume
   - Option to normalize all exports to consistent volume
   - Peak limiter to prevent clipping
@@ -39,6 +29,7 @@ This document outlines planned features and improvements for The Artificer.
   - Timeline-based editing
   - Export complete scenes
 
+### Low Priority
 - [ ] **Plugin System** - Extend functionality with plugins
   - Custom effects
   - Custom export formats
