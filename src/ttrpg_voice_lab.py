@@ -1054,6 +1054,17 @@ class TTRPGVoiceLab(ctk.CTk):
         if not PYCAW_AVAILABLE:
             self.reset_audio_btn.grid_remove()
 
+        # Discord Setup Guide button
+        self.discord_guide_btn = ctk.CTkButton(
+            self.voice_sidebar,
+            text="📖 Discord Setup Guide",
+            command=self.open_discord_guide,
+            height=35,
+            fg_color="#5865F2",
+            hover_color="#4752C4"
+        )
+        self.discord_guide_btn.grid(row=8, column=0, padx=20, pady=(5, 5), sticky="ew")
+
         # About / License button
         self.about_btn = ctk.CTkButton(
             self.voice_sidebar,
@@ -1063,7 +1074,7 @@ class TTRPGVoiceLab(ctk.CTk):
             fg_color="gray30",
             hover_color="gray20"
         )
-        self.about_btn.grid(row=8, column=0, padx=20, pady=(5, 20), sticky="ew")
+        self.about_btn.grid(row=9, column=0, padx=20, pady=(5, 20), sticky="ew")
 
         # Populate voice models (moved to after status_label creation)
         self.voice_models = {}  # Dictionary: display_name -> model_path
@@ -1187,6 +1198,29 @@ class TTRPGVoiceLab(ctk.CTk):
 
         # Refresh voice models after dialog closes
         self.load_voice_models()
+
+    def open_discord_guide(self):
+        """Open the Discord setup guide (VB-CABLE installation help)"""
+        try:
+            # Use same path logic as base_dir for consistency
+            if getattr(sys, 'frozen', False):
+                # Running as compiled executable - docs are next to EXE
+                base_path = Path(sys.executable).parent
+            else:
+                # Running as script
+                base_path = Path(__file__).parent.parent
+
+            setup_guide_path = base_path / 'docs' / 'vb-cable-setup.html'
+
+            if setup_guide_path.exists():
+                # Open local HTML file
+                webbrowser.open(f'file://{setup_guide_path.absolute()}')
+            else:
+                # Fallback to online VB-Audio website if HTML file not found
+                webbrowser.open("https://vb-audio.com/Cable/")
+        except Exception as e:
+            # Fallback to online VB-Audio website
+            webbrowser.open("https://vb-audio.com/Cable/")
 
     def show_about_dialog(self):
         """Show About/License dialog"""
