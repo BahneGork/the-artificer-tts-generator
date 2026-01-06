@@ -1369,10 +1369,15 @@ class TTRPGVoiceLab(ctk.CTk):
             return
 
         # Get all recording devices
-        devices = self.audio_device_manager.get_all_recording_devices()
+        try:
+            devices = self.audio_device_manager.get_all_recording_devices()
+            print(f"DEBUG configure_discord_device: Got {len(devices)} devices")
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to enumerate audio devices:\n{e}")
+            return
 
-        if not devices:
-            messagebox.showerror("Error", "No recording devices found")
+        if not devices or len(devices) == 0:
+            messagebox.showerror("Error", "No recording devices found.\n\nMake sure you have a microphone or virtual cable installed.")
             return
 
         # Create configuration dialog
@@ -1397,24 +1402,28 @@ class TTRPGVoiceLab(ctk.CTk):
         )
         instructions.pack(pady=20, padx=20)
 
-        # List of devices
-        device_list_frame = ctk.CTkFrame(dialog)
+        # List of devices - use scrollable frame
+        device_list_frame = ctk.CTkScrollableFrame(dialog, width=560, height=250)
         device_list_frame.pack(pady=10, padx=20, fill="both", expand=True)
 
         selected_device = ctk.StringVar(value="")
 
+        print(f"DEBUG: Creating radio buttons for {len(devices)} devices")
         for idx, device in enumerate(devices):
             # Show device ID for now (since we can't get friendly names reliably)
             device_label = f"Device {idx + 1}: {device['id']}"
+            print(f"DEBUG: Adding radio button: {device_label}")
 
             radio = ctk.CTkRadioButton(
                 device_list_frame,
                 text=device_label,
                 variable=selected_device,
                 value=device['id'],
-                wraplength=550
+                wraplength=500
             )
-            radio.pack(pady=5, padx=10, anchor="w")
+            radio.pack(pady=5, padx=10, anchor="w", fill="x")
+
+        print(f"DEBUG: Finished adding {len(devices)} radio buttons")
 
         # Buttons
         button_frame = ctk.CTkFrame(dialog)
