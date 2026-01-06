@@ -372,6 +372,11 @@ class AudioDeviceManager:
                 # {0.0.0.00000000}.{guid} = render/output device
                 # {0.0.1.00000000}.{guid} = capture/input device
                 if device.id.startswith('{0.0.1.'):
+                    # Check if device is active (state == 1 means DEVICE_STATE_ACTIVE)
+                    if device.state != 1:
+                        print(f"DEBUG: Skipping inactive device: {device.FriendlyName} (state={device.state})")
+                        continue
+
                     # Get the endpoint for this device
                     try:
                         device_enumerator = AudioUtilities.GetDeviceEnumerator()
@@ -1394,8 +1399,8 @@ class TTRPGVoiceLab(ctk.CTk):
 
         print(f"DEBUG: Creating radio buttons for {len(devices)} devices")
         for idx, device in enumerate(devices):
-            # Show device ID for now (since we can't get friendly names reliably)
-            device_label = f"Device {idx + 1}: {device['id']}"
+            # Show friendly device name
+            device_label = device['name']
             print(f"DEBUG: Adding radio button: {device_label}")
 
             radio = ctk.CTkRadioButton(
