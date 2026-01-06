@@ -101,9 +101,16 @@ except ImportError:
 try:
     import pygame.mixer
     PYGAME_AVAILABLE = True
-except ImportError:
+    print("SUCCESS: pygame.mixer imported successfully")
+except ImportError as e:
     PYGAME_AVAILABLE = False
-    print("Warning: pygame not available. Preview will use pydub playback instead.")
+    print(f"Warning: pygame not available: {e}")
+    print("Preview will use pydub playback instead.")
+except Exception as e:
+    PYGAME_AVAILABLE = False
+    print(f"Error importing pygame: {e}")
+    import traceback
+    traceback.print_exc()
 
 # Set appearance mode and color theme
 ctk.set_appearance_mode("dark")
