@@ -59,6 +59,12 @@ hiddenimports = [
 # Add pedalboard data files
 datas += collect_data_files('pedalboard')
 
+# Add pycaw data files
+try:
+    datas += collect_data_files('pycaw')
+except:
+    pass  # pycaw might not have data files
+
 a = Analysis(
     ['src/ttrpg_voice_lab.py'],
     pathex=[],
@@ -87,7 +93,7 @@ exe = EXE(
     bootloader_ignore_signals=False,
     strip=False,
     upx=True,
-    console=False,  # No console window for GUI app
+    console=True,  # Temporarily enabled for debugging
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
