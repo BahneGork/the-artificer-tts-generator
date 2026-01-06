@@ -4,7 +4,7 @@ PyInstaller spec file for The Artificer - TTS Voice Generator
 Build with: pyinstaller ttrpg_voice_lab.spec
 """
 
-from PyInstaller.utils.hooks import collect_data_files, collect_submodules
+from PyInstaller.utils.hooks import collect_data_files, collect_submodules, collect_dynamic_libs
 import os
 
 block_cipher = None
@@ -66,6 +66,13 @@ try:
     datas += collect_data_files('pycaw')
 except:
     pass  # pycaw might not have data files
+
+# Add pygame data files and binaries
+try:
+    datas += collect_data_files('pygame')
+    binaries += collect_dynamic_libs('pygame')
+except:
+    pass  # pygame might not have data files
 
 a = Analysis(
     ['src/ttrpg_voice_lab.py'],
