@@ -362,52 +362,40 @@ class AudioDeviceManager:
 
         try:
             devices = []
-            device_enumerator = AudioUtilities.GetDeviceEnumerator()
 
-            # Get all active recording devices
-            endpoints = device_enumerator.EnumAudioEndpoints(EDataFlow.eCapture.value, 1)  # 1 = DEVICE_STATE_ACTIVE
+            # Use pycaw's GetAllDevices() which provides friendly names
+            from pycaw.pycaw import AudioUtilities
+            all_devices = AudioUtilities.GetAllDevices()
 
-            for i in range(endpoints.GetCount()):
-                endpoint = endpoints.Item(i)
-                device_id = endpoint.GetId()
-
-                # Get friendly name from Windows Registry
+            for device in all_devices:
+                # Only include input (capture) devices
+                # Check if this is a recording device by trying to get the endpoint
                 try:
-                    import winreg
-                    # Use the full device ID directly (it already has braces)
-                    reg_path = f"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\MMDevices\\Audio\\Capture\\{device_id}"
-                    print(f"DEBUG: Trying registry path: {reg_path}")
+                    device_enumerator = AudioUtilities.GetDeviceEnumerator()
+                    endpoint = device_enumerator.GetDevice(device.id)
 
-                    key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, reg_path)
+                    # Check if it's a capture device
+                    from pycaw.constants import EDataFlow
+                    endpoint_desc = endpoint.GetDataFlow()
 
-                    # Try FriendlyName first, then DeviceDesc
-                    try:
-                        name, _ = winreg.QueryValueEx(key, "FriendlyName")
-                    except:
-                        name, _ = winreg.QueryValueEx(key, "DeviceDesc")
-
-                    winreg.CloseKey(key)
-
-                    # If DeviceDesc has format "@driver.inf,%id%;Friendly Name", extract friendly name
-                    if ';' in name:
-                        name = name.split(';')[-1]
-
-                    print(f"DEBUG: Device {i}: {name}")
+                    # Only include capture devices (not render/output devices)
+                    if endpoint_desc == EDataFlow.eCapture.value:
+                        devices.append({
+                            'id': device.id,
+                            'name': device.FriendlyName,  # This should have the friendly name!
+                            'endpoint': endpoint
+                        })
+                        print(f"DEBUG: Found capture device: {device.FriendlyName}")
                 except Exception as ex:
-                    print(f"DEBUG: Could not get name from registry: {ex}")
-                    # Fallback to device ID
-                    name = device_id
-                    print(f"DEBUG: Device {i}: {name} (using ID)")
-
-                devices.append({
-                    'id': device_id,
-                    'name': name,
-                    'endpoint': endpoint
-                })
+                    # Skip devices we can't access
+                    print(f"DEBUG: Skipping device {device.id}: {ex}")
+                    continue
 
             return devices
         except Exception as e:
             print(f"Error getting recording devices: {e}")
+            import traceback
+            traceback.print_exc()
             return []
 
     def get_current_default_device(self):
