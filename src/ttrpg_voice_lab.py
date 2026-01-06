@@ -479,6 +479,7 @@ class AudioDeviceManager:
         try:
             # Initialize COM for this thread
             from comtypes import CoInitialize, CoUninitialize, CoCreateInstance
+            from ctypes import create_unicode_buffer
             CoInitialize()
 
             # Use the IPolicyConfig interface we defined at the top of the file
@@ -489,14 +490,19 @@ class AudioDeviceManager:
                 CLSCTX_ALL
             )
 
+            # Convert device_id string to a unicode buffer that ctypes can work with
+            device_id_buffer = create_unicode_buffer(device_id)
+
             # Set as default for all roles
-            policy_config.SetDefaultEndpoint(device_id, ERole.eConsole.value)
-            policy_config.SetDefaultEndpoint(device_id, ERole.eMultimedia.value)
-            policy_config.SetDefaultEndpoint(device_id, ERole.eCommunications.value)
+            policy_config.SetDefaultEndpoint(device_id_buffer, ERole.eConsole.value)
+            policy_config.SetDefaultEndpoint(device_id_buffer, ERole.eMultimedia.value)
+            policy_config.SetDefaultEndpoint(device_id_buffer, ERole.eCommunications.value)
 
             return True
         except Exception as e:
             print(f"Error setting default device: {e}")
+            import traceback
+            traceback.print_exc()
             return False
 
     def find_virtual_cable(self):
