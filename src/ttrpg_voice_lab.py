@@ -51,6 +51,23 @@ from pedalboard import (
 try:
     from comtypes import CLSCTX_ALL
     from pycaw.pycaw import AudioUtilities, IMMDeviceEnumerator, EDataFlow, ERole
+
+    # Define PKEY_Device_FriendlyName (not exported in all pycaw versions)
+    from comtypes import GUID
+    from ctypes import Structure, POINTER, c_ulong
+    from ctypes.wintypes import DWORD
+
+    class PROPERTYKEY(Structure):
+        _fields_ = [
+            ('fmtid', GUID),
+            ('pid', DWORD)
+        ]
+
+    PKEY_Device_FriendlyName = PROPERTYKEY(
+        GUID('{a45c254e-df1c-4efd-8020-67d146a850e0}'),
+        14
+    )
+
     PYCAW_AVAILABLE = True
 except ImportError:
     PYCAW_AVAILABLE = False
@@ -358,8 +375,7 @@ class AudioDeviceManager:
                 from pycaw.pycaw import IPropertyStore
                 store = cast(endpoint.OpenPropertyStore(0), POINTER(IPropertyStore))
 
-                # PKEY_Device_FriendlyName
-                from pycaw.constants import PKEY_Device_FriendlyName
+                # Get device friendly name using PropertyKey
                 name = store.GetValue(PKEY_Device_FriendlyName).GetValue()
 
                 devices.append({
@@ -391,7 +407,7 @@ class AudioDeviceManager:
             from comtypes import cast, POINTER
             from pycaw.pycaw import IPropertyStore
             store = cast(default_device.OpenPropertyStore(0), POINTER(IPropertyStore))
-            from pycaw.constants import PKEY_Device_FriendlyName
+            # Get device friendly name using PropertyKey
             name = store.GetValue(PKEY_Device_FriendlyName).GetValue()
 
             return {
