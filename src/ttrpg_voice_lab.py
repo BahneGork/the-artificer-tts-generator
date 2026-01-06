@@ -348,11 +348,12 @@ class AudioDeviceManager:
     Handles automatic device switching and restoration for "Send to Discord" feature.
     """
 
-    def __init__(self):
+    def __init__(self, app_instance=None):
         self.original_device_id = None
         self.original_device_name = None
         self.is_discord_mode = False
         self.pycaw_available = PYCAW_AVAILABLE
+        self.app_instance = app_instance  # Reference to main app for config loading
 
     def get_all_recording_devices(self):
         """Get list of all recording devices"""
@@ -475,7 +476,7 @@ class AudioDeviceManager:
             return False
 
     def find_virtual_cable(self):
-        """Find VB-CABLE or similar virtual audio device"""
+        """Find VB-CABLE or similar virtual audio device using saved config"""
         devices = self.get_all_recording_devices()
 
         # Debug: print all detected devices
@@ -483,17 +484,23 @@ class AudioDeviceManager:
         for device in devices:
             print(f"  - {device['name']}")
 
-        # Look for common virtual cable names
-        virtual_cable_keywords = ['CABLE', 'VoiceMeeter', 'Virtual', 'VAC']
+        # First, check if user has configured a specific device
+        saved_device_id = None
+        if self.app_instance:
+            saved_device_id = self.app_instance.load_discord_config()
 
-        for device in devices:
-            name = device['name']
-            for keyword in virtual_cable_keywords:
-                if keyword.lower() in name.lower():
-                    print(f"DEBUG: Matched virtual cable: {name}")
+        if saved_device_id:
+            print(f"DEBUG: Using saved virtual cable: {saved_device_id}")
+            # Find the saved device in the list
+            for device in devices:
+                if device['id'] == saved_device_id:
+                    print(f"DEBUG: Found saved virtual cable")
                     return device
+            print(f"DEBUG: Saved device not found - may have been unplugged")
 
-        print("DEBUG: No virtual cable found")
+        # Fallback: try auto-detection (probably won't work without friendly names)
+        print("DEBUG: No configured virtual cable - auto-detection not reliable")
+        print("DEBUG: Please use '⚙️ Configure Discord' button to select your virtual cable")
         return None
 
     def switch_to_virtual_cable(self):
@@ -581,7 +588,7 @@ class TTRPGVoiceLab(ctk.CTk):
         self.is_sending_to_discord = False  # Track Discord playback state
 
         # Initialize audio device manager for Discord integration
-        self.audio_device_manager = AudioDeviceManager()
+        self.audio_device_manager = AudioDeviceManager(app_instance=self)
 
         # Paths - handle both development and PyInstaller frozen app
         if getattr(sys, 'frozen', False):
@@ -1143,6 +1150,21 @@ class TTRPGVoiceLab(ctk.CTk):
         if not PYCAW_AVAILABLE:
             self.reset_audio_btn.grid_remove()
 
+        # Configure Discord button
+        self.configure_discord_btn = ctk.CTkButton(
+            self.voice_sidebar,
+            text="⚙️ Configure Discord",
+            command=self.configure_discord_device,
+            height=35,
+            fg_color="#5865F2",
+            hover_color="#4752C4"
+        )
+        self.configure_discord_btn.grid(row=9, column=0, padx=20, pady=(5, 5), sticky="ew")
+
+        # Show/hide configure button based on pycaw availability
+        if not PYCAW_AVAILABLE:
+            self.configure_discord_btn.grid_remove()
+
         # Discord Setup Guide button
         self.discord_guide_btn = ctk.CTkButton(
             self.voice_sidebar,
@@ -1152,7 +1174,7 @@ class TTRPGVoiceLab(ctk.CTk):
             fg_color="#5865F2",
             hover_color="#4752C4"
         )
-        self.discord_guide_btn.grid(row=9, column=0, padx=20, pady=(5, 5), sticky="ew")
+        self.discord_guide_btn.grid(row=10, column=0, padx=20, pady=(5, 5), sticky="ew")
 
         # About / License button
         self.about_btn = ctk.CTkButton(
@@ -1163,7 +1185,7 @@ class TTRPGVoiceLab(ctk.CTk):
             fg_color="gray30",
             hover_color="gray20"
         )
-        self.about_btn.grid(row=10, column=0, padx=20, pady=(5, 20), sticky="ew")
+        self.about_btn.grid(row=11, column=0, padx=20, pady=(5, 20), sticky="ew")
 
         # Status bar at bottom of window
         status_bar_frame = ctk.CTkFrame(self, height=30, corner_radius=0)
@@ -1305,6 +1327,128 @@ class TTRPGVoiceLab(ctk.CTk):
 
         # Refresh voice models after dialog closes
         self.load_voice_models()
+
+    def load_discord_config(self):
+        """Load Discord virtual cable configuration from config file"""
+        try:
+            if getattr(sys, 'frozen', False):
+                config_path = Path(sys.executable).parent / 'discord_config.json'
+            else:
+                config_path = Path(__file__).parent.parent / 'discord_config.json'
+
+            if config_path.exists():
+                import json
+                with open(config_path, 'r') as f:
+                    config = json.load(f)
+                    return config.get('virtual_cable_device_id')
+        except Exception as e:
+            print(f"Error loading Discord config: {e}")
+        return None
+
+    def save_discord_config(self, device_id):
+        """Save Discord virtual cable configuration to config file"""
+        try:
+            if getattr(sys, 'frozen', False):
+                config_path = Path(sys.executable).parent / 'discord_config.json'
+            else:
+                config_path = Path(__file__).parent.parent / 'discord_config.json'
+
+            import json
+            config = {'virtual_cable_device_id': device_id}
+            with open(config_path, 'w') as f:
+                json.dump(config, f, indent=2)
+            return True
+        except Exception as e:
+            print(f"Error saving Discord config: {e}")
+            return False
+
+    def configure_discord_device(self):
+        """Show dialog to configure which device is the virtual cable"""
+        if not PYCAW_AVAILABLE:
+            messagebox.showerror("Error", "Discord integration not available (pycaw not installed)")
+            return
+
+        # Get all recording devices
+        devices = self.audio_device_manager.get_all_recording_devices()
+
+        if not devices:
+            messagebox.showerror("Error", "No recording devices found")
+            return
+
+        # Create configuration dialog
+        dialog = ctk.CTkToplevel(self)
+        dialog.title("Configure Discord Virtual Cable")
+        dialog.geometry("600x400")
+        dialog.transient(self)
+        dialog.grab_set()
+
+        # Center dialog
+        dialog.update_idletasks()
+        x = self.winfo_x() + (self.winfo_width() // 2) - (dialog.winfo_width() // 2)
+        y = self.winfo_y() + (self.winfo_height() // 2) - (dialog.winfo_height() // 2)
+        dialog.geometry(f"+{x}+{y}")
+
+        # Instructions
+        instructions = ctk.CTkLabel(
+            dialog,
+            text="Select your virtual audio cable device (e.g., VB-CABLE Output):",
+            font=ctk.CTkFont(size=14, weight="bold"),
+            wraplength=550
+        )
+        instructions.pack(pady=20, padx=20)
+
+        # List of devices
+        device_list_frame = ctk.CTkFrame(dialog)
+        device_list_frame.pack(pady=10, padx=20, fill="both", expand=True)
+
+        selected_device = ctk.StringVar(value="")
+
+        for idx, device in enumerate(devices):
+            # Show device ID for now (since we can't get friendly names reliably)
+            device_label = f"Device {idx + 1}: {device['id']}"
+
+            radio = ctk.CTkRadioButton(
+                device_list_frame,
+                text=device_label,
+                variable=selected_device,
+                value=device['id'],
+                wraplength=550
+            )
+            radio.pack(pady=5, padx=10, anchor="w")
+
+        # Buttons
+        button_frame = ctk.CTkFrame(dialog)
+        button_frame.pack(pady=20, padx=20, fill="x")
+
+        def save_selection():
+            device_id = selected_device.get()
+            if not device_id:
+                messagebox.showwarning("No Selection", "Please select a device")
+                return
+
+            if self.save_discord_config(device_id):
+                messagebox.showinfo("Success", "Virtual cable configured successfully!")
+                dialog.destroy()
+            else:
+                messagebox.showerror("Error", "Failed to save configuration")
+
+        save_btn = ctk.CTkButton(
+            button_frame,
+            text="Save",
+            command=save_selection,
+            fg_color="#5865F2",
+            hover_color="#4752C4"
+        )
+        save_btn.pack(side="left", padx=5)
+
+        cancel_btn = ctk.CTkButton(
+            button_frame,
+            text="Cancel",
+            command=dialog.destroy,
+            fg_color="gray30",
+            hover_color="gray20"
+        )
+        cancel_btn.pack(side="left", padx=5)
 
     def open_discord_guide(self):
         """Open the Discord setup guide (VB-CABLE installation help)"""
@@ -1943,34 +2087,16 @@ Voice models are NOT distributed with this application.
         # Check for virtual cable
         virtual_cable = self.audio_device_manager.find_virtual_cable()
         if not virtual_cable:
-            response = messagebox.askyesno(
-                "VB-CABLE Setup Required",
-                "Virtual audio cable not detected.\n\n"
-                "VB-CABLE is required for Discord integration.\n"
-                "It's free, takes 2 minutes to install, and works great!\n\n"
-                "Open the step-by-step setup guide now?"
+            messagebox.showinfo(
+                "Configure Discord Integration",
+                "Virtual audio cable not configured.\n\n"
+                "Please click '⚙️ Configure Discord' button to select\n"
+                "your virtual cable device (e.g., VB-CABLE Output).\n\n"
+                "First time setup:\n"
+                "1. Install VB-CABLE (see 📖 Discord Setup Guide)\n"
+                "2. Click '⚙️ Configure Discord' to select the device\n"
+                "3. Click '🎙️ Send to Discord' to use it"
             )
-            if response:
-                # Try to open local HTML setup guide
-                try:
-                    if getattr(sys, 'frozen', False):
-                        # Running as PyInstaller bundle
-                        base_path = sys._MEIPASS
-                    else:
-                        # Running as script
-                        base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-                    setup_guide_path = os.path.join(base_path, 'docs', 'vb-cable-setup.html')
-
-                    if os.path.exists(setup_guide_path):
-                        # Open local HTML file
-                        webbrowser.open(f'file://{os.path.abspath(setup_guide_path)}')
-                    else:
-                        # Fallback to online VB-Audio website if HTML file not found
-                        webbrowser.open("https://vb-audio.com/Cable/")
-                except Exception as e:
-                    # Fallback to online VB-Audio website
-                    webbrowser.open("https://vb-audio.com/Cable/")
             return
 
         # Hide send button, show cancel button
