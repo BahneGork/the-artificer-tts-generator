@@ -68,6 +68,31 @@ try:
         14
     )
 
+    # Define IPolicyConfig interface for setting default audio device
+    # This is not exposed by pycaw, so we define it ourselves
+    from comtypes import COMMETHOD, HRESULT, POINTER
+    from comtypes.gen import IUnknown
+    from ctypes import c_wchar_p
+
+    class IPolicyConfig(comtypes.IUnknown):
+        _iid_ = GUID('{f8679f50-850a-41cf-9c72-430f290290c8}')
+        _methods_ = [
+            # We only need SetDefaultEndpoint
+            COMMETHOD([], HRESULT, 'GetMixFormat'),
+            COMMETHOD([], HRESULT, 'GetDeviceFormat'),
+            COMMETHOD([], HRESULT, 'ResetDeviceFormat'),
+            COMMETHOD([], HRESULT, 'SetDeviceFormat'),
+            COMMETHOD([], HRESULT, 'GetProcessingPeriod'),
+            COMMETHOD([], HRESULT, 'SetProcessingPeriod'),
+            COMMETHOD([], HRESULT, 'GetShareMode'),
+            COMMETHOD([], HRESULT, 'SetShareMode'),
+            COMMETHOD([], HRESULT, 'GetPropertyValue'),
+            COMMETHOD([], HRESULT, 'SetPropertyValue'),
+            COMMETHOD([], HRESULT, 'SetDefaultEndpoint',
+                     (['in'], c_wchar_p, 'pszDeviceId'),
+                     (['in'], ERole, 'role')),
+        ]
+
     PYCAW_AVAILABLE = True
 except ImportError:
     PYCAW_AVAILABLE = False
@@ -457,10 +482,8 @@ class AudioDeviceManager:
             from comtypes import CoInitialize, CoUninitialize, CoCreateInstance
             CoInitialize()
 
-            # This requires IMMDevice.SetDefaultAudioEndpoint which is not directly
-            # exposed in pycaw. We need to use PolicyConfig COM interface.
-            from pycaw.pycaw import IPolicyConfig
-
+            # Use the IPolicyConfig interface we defined at the top of the file
+            # to set the default audio device
             policy_config = CoCreateInstance(
                 '{870af99c-171d-4f9e-af0d-e63df40c2bc9}',  # CLSID_CPolicyConfigClient
                 IPolicyConfig,
