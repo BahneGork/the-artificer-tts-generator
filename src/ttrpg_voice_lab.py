@@ -372,8 +372,10 @@ class AudioDeviceManager:
                 # {0.0.0.00000000}.{guid} = render/output device
                 # {0.0.1.00000000}.{guid} = capture/input device
                 if device.id.startswith('{0.0.1.'):
-                    # Check if device is active (state == 1 means DEVICE_STATE_ACTIVE)
-                    if device.state != 1:
+                    # Check if device is active - state is an enum (AudioDeviceState.Active)
+                    # Convert enum to string and check
+                    state_str = str(device.state)
+                    if 'Active' not in state_str:
                         print(f"DEBUG: Skipping inactive device: {device.FriendlyName} (state={device.state})")
                         continue
 
@@ -387,7 +389,7 @@ class AudioDeviceManager:
                             'name': device.FriendlyName,
                             'endpoint': endpoint
                         })
-                        print(f"DEBUG: Found capture device: {device.FriendlyName}")
+                        print(f"DEBUG: Found ACTIVE capture device: {device.FriendlyName}")
                     except Exception as ex:
                         print(f"DEBUG: Could not get endpoint for {device.id}: {ex}")
                         continue
