@@ -1418,8 +1418,7 @@ class TTRPGVoiceLab(ctk.CTk):
                 device_list_frame,
                 text=device_label,
                 variable=selected_device,
-                value=device['id'],
-                wraplength=500
+                value=device['id']
             )
             radio.pack(pady=5, padx=10, anchor="w", fill="x")
 
