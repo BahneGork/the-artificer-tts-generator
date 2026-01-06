@@ -370,13 +370,10 @@ class AudioDeviceManager:
                 endpoint = endpoints.Item(i)
                 device_id = endpoint.GetId()
 
-                # Get friendly name
-                from comtypes import cast, POINTER, pointer
-                from pycaw.pycaw import IPropertyStore
-                store = cast(endpoint.OpenPropertyStore(0), POINTER(IPropertyStore))
-
-                # Get device friendly name using PropertyKey (must be pointer)
-                name = store.GetValue(pointer(PKEY_Device_FriendlyName)).GetValue()
+                # Simplified approach: use device ID itself as name
+                # VB-CABLE will have "CABLE" somewhere in the device ID
+                name = device_id
+                print(f"DEBUG: Device {i}: {name}")
 
                 devices.append({
                     'id': device_id,
@@ -403,12 +400,8 @@ class AudioDeviceManager:
 
             device_id = default_device.GetId()
 
-            # Get friendly name
-            from comtypes import cast, POINTER, pointer
-            from pycaw.pycaw import IPropertyStore
-            store = cast(default_device.OpenPropertyStore(0), POINTER(IPropertyStore))
-            # Get device friendly name using PropertyKey (must be pointer)
-            name = store.GetValue(pointer(PKEY_Device_FriendlyName)).GetValue()
+            # Simplified: use device ID as name
+            name = device_id
 
             return {
                 'id': device_id,
