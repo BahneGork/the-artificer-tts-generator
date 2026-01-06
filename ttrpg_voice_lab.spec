@@ -46,7 +46,8 @@ hiddenimports = [
     'pedalboard',
     'pydub',
     'pydub.playback',
-    'pygame',
+    'pygame',  # For audio playback
+    'pygame.mixer',
     'numpy',
     'customtkinter',
     'audioop_lts',  # Required for Python 3.13+
