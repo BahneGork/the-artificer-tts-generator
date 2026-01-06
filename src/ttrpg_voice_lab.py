@@ -434,6 +434,11 @@ class AudioDeviceManager:
         """Find VB-CABLE or similar virtual audio device"""
         devices = self.get_all_recording_devices()
 
+        # Debug: print all detected devices
+        print(f"DEBUG: Found {len(devices)} recording devices:")
+        for device in devices:
+            print(f"  - {device['name']}")
+
         # Look for common virtual cable names
         virtual_cable_keywords = ['CABLE', 'VoiceMeeter', 'Virtual', 'VAC']
 
@@ -441,8 +446,10 @@ class AudioDeviceManager:
             name = device['name']
             for keyword in virtual_cable_keywords:
                 if keyword.lower() in name.lower():
+                    print(f"DEBUG: Matched virtual cable: {name}")
                     return device
 
+        print("DEBUG: No virtual cable found")
         return None
 
     def switch_to_virtual_cable(self):
