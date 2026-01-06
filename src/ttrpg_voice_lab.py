@@ -2067,21 +2067,45 @@ Voice models are NOT distributed with this application.
             # Play audio to virtual cable (this goes to Discord)
             self.status_label.configure(text="Playing to Discord...")
 
-            # Load and play audio
-            audio_to_play = AudioSegment.from_file(temp_discord_path)
+            # Give audio system time to stabilize after device switch
+            time.sleep(1.0)
 
-            # Play in chunks so we can check for cancellation
-            chunk_size = 100  # milliseconds
-            for i in range(0, len(audio_to_play), chunk_size):
-                if not self.is_sending_to_discord:
-                    # Cancelled
-                    break
+            # Use pygame for more reliable playback after device switch
+            if PYGAME_AVAILABLE:
+                # Initialize pygame mixer
+                try:
+                    pygame.mixer.quit()  # Reset if already initialized
+                except:
+                    pass
+                pygame.mixer.init(frequency=44100, size=-16, channels=2, buffer=512)
 
-                chunk = audio_to_play[i:i+chunk_size]
+                # Load and play
+                pygame.mixer.music.load(temp_discord_path)
+                pygame.mixer.music.play()
 
-                # Use pydub's playback
-                from pydub.playback import play
-                play(chunk)
+                # Wait for playback to finish (checking for cancellation)
+                while pygame.mixer.music.get_busy():
+                    if not self.is_sending_to_discord:
+                        pygame.mixer.music.stop()
+                        break
+                    pygame.display.get_surface() if pygame.display.get_surface() else None
+                    time.sleep(0.1)
+            else:
+                # Fallback to pydub playback
+                audio_to_play = AudioSegment.from_file(temp_discord_path)
+
+                # Play in chunks so we can check for cancellation
+                chunk_size = 100  # milliseconds
+                for i in range(0, len(audio_to_play), chunk_size):
+                    if not self.is_sending_to_discord:
+                        # Cancelled
+                        break
+
+                    chunk = audio_to_play[i:i+chunk_size]
+
+                    # Use pydub's playback
+                    from pydub.playback import play
+                    play(chunk)
 
             # Restore microphone
             time.sleep(0.3)  # Brief pause before switching back
