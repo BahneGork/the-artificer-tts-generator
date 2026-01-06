@@ -380,8 +380,10 @@ class AudioDeviceManager:
     """
 
     def __init__(self, app_instance=None):
-        self.original_device_id = None
-        self.original_device_name = None
+        self.original_output_device_id = None
+        self.original_output_device_name = None
+        self.original_input_device_id = None
+        self.original_input_device_name = None
         self.is_discord_mode = False
         self.pycaw_available = PYCAW_AVAILABLE
         self.app_instance = app_instance  # Reference to main app for config loading
@@ -583,62 +585,90 @@ class AudioDeviceManager:
             return None
 
     def switch_to_virtual_cable(self):
-        """Switch default PLAYBACK device to CABLE Input for Discord"""
-        # Save current playback device
+        """Switch default OUTPUT to CABLE Input and INPUT to CABLE Output for Discord"""
         try:
             from comtypes import CoInitialize
             CoInitialize()
 
             device_enumerator = AudioUtilities.GetDeviceEnumerator()
-            default_device = device_enumerator.GetDefaultAudioEndpoint(
-                0,  # eRender = 0 (playback devices)
+
+            # Save current OUTPUT device (speakers)
+            output_device = device_enumerator.GetDefaultAudioEndpoint(
+                0,  # eRender = 0 (playback/output devices)
                 ERole.eConsole.value
             )
+            self.original_output_device_id = output_device.GetId()
 
-            self.original_device_id = default_device.GetId()
-            # Try to get friendly name
-            try:
-                all_devices = AudioUtilities.GetAllDevices()
-                for dev in all_devices:
-                    if dev.id == self.original_device_id:
-                        self.original_device_name = dev.FriendlyName
-                        break
-            except:
-                self.original_device_name = "Default Speakers"
+            # Save current INPUT device (microphone)
+            input_device = device_enumerator.GetDefaultAudioEndpoint(
+                1,  # eCapture = 1 (recording/input devices)
+                ERole.eConsole.value
+            )
+            self.original_input_device_id = input_device.GetId()
 
-            print(f"DEBUG: Current playback device: {self.original_device_name}")
+            # Get friendly names
+            all_devices = AudioUtilities.GetAllDevices()
+            for dev in all_devices:
+                if dev.id == self.original_output_device_id:
+                    self.original_output_device_name = dev.FriendlyName
+                if dev.id == self.original_input_device_id:
+                    self.original_input_device_name = dev.FriendlyName
+
+            print(f"DEBUG: Current OUTPUT: {self.original_output_device_name}")
+            print(f"DEBUG: Current INPUT: {self.original_input_device_name}")
 
         except Exception as e:
-            print(f"Error getting current playback device: {e}")
-            return False, "Could not detect current speakers"
+            print(f"Error getting current devices: {e}")
+            return False, "Could not detect current audio devices"
 
-        # Find CABLE Input (playback device)
+        # Find CABLE Input (OUTPUT/playback device - where we PLAY audio TO)
         cable_input = self.get_cable_input_device()
         if not cable_input:
             return False, "CABLE Input not found. Please install VB-CABLE."
 
-        # Switch to CABLE Input
-        success = self.set_default_device(cable_input['id'])
-        if success:
+        # Find CABLE Output (INPUT/recording device - where Discord RECORDS FROM)
+        cable_output = self.find_virtual_cable()
+        if not cable_output:
+            return False, "CABLE Output not found. Please configure with ⚙️ button."
+
+        # Switch OUTPUT to CABLE Input (so audio plays through cable)
+        print(f"DEBUG: Switching OUTPUT to {cable_input['name']}")
+        success1 = self.set_default_device(cable_input['id'])
+
+        # Switch INPUT to CABLE Output (so Discord hears it)
+        print(f"DEBUG: Switching INPUT to {cable_output['name']}")
+        success2 = self.set_default_device(cable_output['id'])
+
+        if success1 and success2:
             self.is_discord_mode = True
-            return True, f"Playing to '{cable_input['name']}' (Discord will hear this)"
+            return True, f"Audio routing through virtual cable"
         else:
-            return False, "Failed to switch audio device"
+            return False, "Failed to switch audio devices"
 
     def restore_original_device(self):
-        """Restore original playback device (speakers)"""
-        if not self.original_device_id:
-            return False, "No original device to restore"
+        """Restore original OUTPUT (speakers) and INPUT (microphone) devices"""
+        if not self.original_output_device_id or not self.original_input_device_id:
+            return False, "No original devices to restore"
 
-        success = self.set_default_device(self.original_device_id)
-        if success:
-            name = self.original_device_name
-            self.original_device_id = None
-            self.original_device_name = None
+        # Restore OUTPUT device (speakers)
+        print(f"DEBUG: Restoring OUTPUT to {self.original_output_device_name}")
+        success1 = self.set_default_device(self.original_output_device_id)
+
+        # Restore INPUT device (microphone)
+        print(f"DEBUG: Restoring INPUT to {self.original_input_device_name}")
+        success2 = self.set_default_device(self.original_input_device_id)
+
+        if success1 and success2:
+            output_name = self.original_output_device_name
+            input_name = self.original_input_device_name
+            self.original_output_device_id = None
+            self.original_output_device_name = None
+            self.original_input_device_id = None
+            self.original_input_device_name = None
             self.is_discord_mode = False
-            return True, f"Restored to '{name}'"
+            return True, f"Restored speakers and microphone"
         else:
-            return False, "Failed to restore microphone"
+            return False, "Failed to restore audio devices"
 
     def emergency_reset(self):
         """Emergency reset - find first real microphone and use it"""
@@ -2165,9 +2195,9 @@ Voice models are NOT distributed with this application.
                     break
                 time.sleep(0.1)
 
-            # Restore original playback device (speakers)
+            # Restore original audio devices
             time.sleep(0.3)  # Brief pause before switching back
-            self.status_label.configure(text="Restoring speakers...")
+            self.status_label.configure(text="Restoring audio devices...")
             success, message = self.audio_device_manager.restore_original_device()
 
             if success:
@@ -2175,7 +2205,7 @@ Voice models are NOT distributed with this application.
                 self.status_label.configure(text="Discord playback complete - Ready")
             else:
                 self.discord_status_label.configure(text=f"⚠️ {message}", text_color="orange")
-                self.status_label.configure(text="Warning: Could not restore speakers - Ready")
+                self.status_label.configure(text="Warning: Could not restore audio - Ready")
 
         except Exception as e:
             import traceback
