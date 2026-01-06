@@ -52,18 +52,16 @@ try:
     from comtypes import CLSCTX_ALL
     from pycaw.pycaw import AudioUtilities, IMMDeviceEnumerator, EDataFlow, ERole
 
-    # Define PKEY_Device_FriendlyName (not exported in all pycaw versions)
+    # Define PKEY_Device_FriendlyName using comtypes (not ctypes)
     from comtypes import GUID
-    from ctypes import Structure, POINTER, c_ulong, pointer
-    from ctypes.wintypes import DWORD
+    import comtypes
 
-    class PROPERTYKEY(Structure):
+    # Define PROPERTYKEY structure using comtypes
+    class PROPERTYKEY(comtypes.Structure):
         _fields_ = [
             ('fmtid', GUID),
-            ('pid', DWORD)
+            ('pid', comtypes.c_ulong)
         ]
-
-    LP_PROPERTYKEY = POINTER(PROPERTYKEY)
 
     PKEY_Device_FriendlyName = PROPERTYKEY(
         GUID('{a45c254e-df1c-4efd-8020-67d146a850e0}'),
@@ -375,11 +373,10 @@ class AudioDeviceManager:
                 # Get friendly name
                 from comtypes import cast, POINTER
                 from pycaw.pycaw import IPropertyStore
-                from ctypes import pointer
                 store = cast(endpoint.OpenPropertyStore(0), POINTER(IPropertyStore))
 
                 # Get device friendly name using PropertyKey
-                name = store.GetValue(pointer(PKEY_Device_FriendlyName)).GetValue()
+                name = store.GetValue(PKEY_Device_FriendlyName).GetValue()
 
                 devices.append({
                     'id': device_id,
@@ -409,10 +406,9 @@ class AudioDeviceManager:
             # Get friendly name
             from comtypes import cast, POINTER
             from pycaw.pycaw import IPropertyStore
-            from ctypes import pointer
             store = cast(default_device.OpenPropertyStore(0), POINTER(IPropertyStore))
             # Get device friendly name using PropertyKey
-            name = store.GetValue(pointer(PKEY_Device_FriendlyName)).GetValue()
+            name = store.GetValue(PKEY_Device_FriendlyName).GetValue()
 
             return {
                 'id': device_id,
