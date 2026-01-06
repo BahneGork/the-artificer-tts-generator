@@ -50,6 +50,9 @@ hiddenimports = [
     'numpy',
     'customtkinter',
     'audioop_lts',  # Required for Python 3.13+
+    'pycaw',  # Windows audio control for Discord integration
+    'pycaw.pycaw',
+    'comtypes',  # Required by pycaw
 ]
 
 # Add pedalboard data files
