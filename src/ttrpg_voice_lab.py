@@ -542,31 +542,91 @@ class AudioDeviceManager:
         print("DEBUG: Please use '⚙️ Configure Discord' button to select your virtual cable")
         return None
 
+    def get_cable_input_device(self):
+        """Find CABLE Input (playback device) - the device we PLAY audio TO"""
+        if not self.pycaw_available:
+            return None
+
+        try:
+            from comtypes import CoInitialize
+            CoInitialize()
+
+            # Get all playback devices (render/output devices)
+            from pycaw.pycaw import AudioUtilities
+            all_devices = AudioUtilities.GetAllDevices()
+
+            for device in all_devices:
+                # Filter for OUTPUT devices (playback)
+                # {0.0.0.00000000}.{guid} = render/output device
+                if device.id.startswith('{0.0.0.'):
+                    # Check if active
+                    state_str = str(device.state)
+                    if 'Active' not in state_str:
+                        continue
+
+                    # Look for CABLE Input
+                    if 'CABLE Input' in device.FriendlyName:
+                        print(f"DEBUG: Found CABLE Input: {device.FriendlyName}")
+                        device_enumerator = AudioUtilities.GetDeviceEnumerator()
+                        endpoint = device_enumerator.GetDevice(device.id)
+                        return {
+                            'id': device.id,
+                            'name': device.FriendlyName,
+                            'endpoint': endpoint
+                        }
+
+            print("DEBUG: CABLE Input not found - is VB-CABLE installed?")
+            return None
+
+        except Exception as e:
+            print(f"Error finding CABLE Input: {e}")
+            return None
+
     def switch_to_virtual_cable(self):
-        """Switch default recording device to virtual cable for Discord"""
-        # Save current device
-        current = self.get_current_default_device()
-        if not current:
-            return False, "Could not detect current microphone"
+        """Switch default PLAYBACK device to CABLE Input for Discord"""
+        # Save current playback device
+        try:
+            from comtypes import CoInitialize
+            CoInitialize()
 
-        self.original_device_id = current['id']
-        self.original_device_name = current['name']
+            device_enumerator = AudioUtilities.GetDeviceEnumerator()
+            default_device = device_enumerator.GetDefaultAudioEndpoint(
+                0,  # eRender = 0 (playback devices)
+                ERole.eConsole.value
+            )
 
-        # Find virtual cable
-        virtual_cable = self.find_virtual_cable()
-        if not virtual_cable:
-            return False, "No virtual cable found. Please install VB-CABLE first."
+            self.original_device_id = default_device.GetId()
+            # Try to get friendly name
+            try:
+                all_devices = AudioUtilities.GetAllDevices()
+                for dev in all_devices:
+                    if dev.id == self.original_device_id:
+                        self.original_device_name = dev.FriendlyName
+                        break
+            except:
+                self.original_device_name = "Default Speakers"
 
-        # Switch to virtual cable
-        success = self.set_default_device(virtual_cable['id'])
+            print(f"DEBUG: Current playback device: {self.original_device_name}")
+
+        except Exception as e:
+            print(f"Error getting current playback device: {e}")
+            return False, "Could not detect current speakers"
+
+        # Find CABLE Input (playback device)
+        cable_input = self.get_cable_input_device()
+        if not cable_input:
+            return False, "CABLE Input not found. Please install VB-CABLE."
+
+        # Switch to CABLE Input
+        success = self.set_default_device(cable_input['id'])
         if success:
             self.is_discord_mode = True
-            return True, f"Switched from '{self.original_device_name}' to '{virtual_cable['name']}'"
+            return True, f"Playing to '{cable_input['name']}' (Discord will hear this)"
         else:
             return False, "Failed to switch audio device"
 
     def restore_original_device(self):
-        """Restore original microphone"""
+        """Restore original playback device (speakers)"""
         if not self.original_device_id:
             return False, "No original device to restore"
 
@@ -2105,9 +2165,9 @@ Voice models are NOT distributed with this application.
                     break
                 time.sleep(0.1)
 
-            # Restore microphone
+            # Restore original playback device (speakers)
             time.sleep(0.3)  # Brief pause before switching back
-            self.status_label.configure(text="Restoring microphone...")
+            self.status_label.configure(text="Restoring speakers...")
             success, message = self.audio_device_manager.restore_original_device()
 
             if success:
@@ -2115,7 +2175,7 @@ Voice models are NOT distributed with this application.
                 self.status_label.configure(text="Discord playback complete - Ready")
             else:
                 self.discord_status_label.configure(text=f"⚠️ {message}", text_color="orange")
-                self.status_label.configure(text="Warning: Could not restore mic - Ready")
+                self.status_label.configure(text="Warning: Could not restore speakers - Ready")
 
         except Exception as e:
             import traceback
