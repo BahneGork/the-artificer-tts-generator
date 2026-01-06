@@ -370,10 +370,29 @@ class AudioDeviceManager:
                 endpoint = endpoints.Item(i)
                 device_id = endpoint.GetId()
 
-                # Simplified approach: use device ID itself as name
-                # VB-CABLE will have "CABLE" somewhere in the device ID
-                name = device_id
-                print(f"DEBUG: Device {i}: {name}")
+                # Get friendly name from Windows Registry
+                try:
+                    import winreg
+                    # Extract GUID from device ID
+                    # Format: {0.0.1.00000000}.{guid}
+                    guid = device_id.split('}.{')[-1].rstrip('}')
+
+                    # Look up in registry
+                    reg_path = f"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\MMDevices\\Audio\\Capture\\{{0.0.1.00000000}}.{{{guid}}}"
+                    key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, reg_path)
+                    name, _ = winreg.QueryValueEx(key, "DeviceDesc")
+                    winreg.CloseKey(key)
+
+                    # If DeviceDesc has format "@driver.inf,%id%;Friendly Name", extract friendly name
+                    if ';' in name:
+                        name = name.split(';')[-1]
+
+                    print(f"DEBUG: Device {i}: {name}")
+                except Exception as ex:
+                    print(f"DEBUG: Could not get name from registry: {ex}")
+                    # Fallback to device ID
+                    name = device_id
+                    print(f"DEBUG: Device {i}: {name} (using ID)")
 
                 devices.append({
                     'id': device_id,
@@ -400,8 +419,18 @@ class AudioDeviceManager:
 
             device_id = default_device.GetId()
 
-            # Simplified: use device ID as name
-            name = device_id
+            # Get friendly name from Windows Registry
+            try:
+                import winreg
+                guid = device_id.split('}.{')[-1].rstrip('}')
+                reg_path = f"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\MMDevices\\Audio\\Capture\\{{0.0.1.00000000}}.{{{guid}}}"
+                key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, reg_path)
+                name, _ = winreg.QueryValueEx(key, "DeviceDesc")
+                winreg.CloseKey(key)
+                if ';' in name:
+                    name = name.split(';')[-1]
+            except:
+                name = device_id
 
             return {
                 'id': device_id,
