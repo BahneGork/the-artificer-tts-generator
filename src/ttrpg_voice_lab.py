@@ -361,6 +361,10 @@ class AudioDeviceManager:
             return []
 
         try:
+            # Initialize COM for this thread
+            from comtypes import CoInitialize, CoUninitialize
+            CoInitialize()
+
             devices = []
 
             # Use pycaw's GetAllDevices() which provides friendly names
@@ -407,6 +411,10 @@ class AudioDeviceManager:
             return None
 
         try:
+            # Initialize COM for this thread
+            from comtypes import CoInitialize, CoUninitialize
+            CoInitialize()
+
             device_enumerator = AudioUtilities.GetDeviceEnumerator()
             default_device = device_enumerator.GetDefaultAudioEndpoint(
                 EDataFlow.eCapture.value,  # Recording devices
@@ -445,9 +453,12 @@ class AudioDeviceManager:
             return False
 
         try:
+            # Initialize COM for this thread
+            from comtypes import CoInitialize, CoUninitialize, CoCreateInstance
+            CoInitialize()
+
             # This requires IMMDevice.SetDefaultAudioEndpoint which is not directly
             # exposed in pycaw. We need to use PolicyConfig COM interface.
-            from comtypes import CoCreateInstance
             from pycaw.pycaw import IPolicyConfig
 
             policy_config = CoCreateInstance(
@@ -1435,6 +1446,7 @@ class TTRPGVoiceLab(ctk.CTk):
             button_frame,
             text="Save",
             command=save_selection,
+            height=40,
             fg_color="#5865F2",
             hover_color="#4752C4"
         )
@@ -1444,6 +1456,7 @@ class TTRPGVoiceLab(ctk.CTk):
             button_frame,
             text="Cancel",
             command=dialog.destroy,
+            height=40,
             fg_color="gray30",
             hover_color="gray20"
         )
