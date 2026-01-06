@@ -373,14 +373,18 @@ class AudioDeviceManager:
                 # Get friendly name from Windows Registry
                 try:
                     import winreg
-                    # Extract GUID from device ID
-                    # Format: {0.0.1.00000000}.{guid}
-                    guid = device_id.split('}.{')[-1].rstrip('}')
+                    # Use the full device ID directly (it already has braces)
+                    reg_path = f"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\MMDevices\\Audio\\Capture\\{device_id}"
+                    print(f"DEBUG: Trying registry path: {reg_path}")
 
-                    # Look up in registry
-                    reg_path = f"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\MMDevices\\Audio\\Capture\\{{0.0.1.00000000}}.{{{guid}}}"
                     key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, reg_path)
-                    name, _ = winreg.QueryValueEx(key, "DeviceDesc")
+
+                    # Try FriendlyName first, then DeviceDesc
+                    try:
+                        name, _ = winreg.QueryValueEx(key, "FriendlyName")
+                    except:
+                        name, _ = winreg.QueryValueEx(key, "DeviceDesc")
+
                     winreg.CloseKey(key)
 
                     # If DeviceDesc has format "@driver.inf,%id%;Friendly Name", extract friendly name
@@ -422,10 +426,12 @@ class AudioDeviceManager:
             # Get friendly name from Windows Registry
             try:
                 import winreg
-                guid = device_id.split('}.{')[-1].rstrip('}')
-                reg_path = f"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\MMDevices\\Audio\\Capture\\{{0.0.1.00000000}}.{{{guid}}}"
+                reg_path = f"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\MMDevices\\Audio\\Capture\\{device_id}"
                 key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, reg_path)
-                name, _ = winreg.QueryValueEx(key, "DeviceDesc")
+                try:
+                    name, _ = winreg.QueryValueEx(key, "FriendlyName")
+                except:
+                    name, _ = winreg.QueryValueEx(key, "DeviceDesc")
                 winreg.CloseKey(key)
                 if ';' in name:
                     name = name.split(';')[-1]
