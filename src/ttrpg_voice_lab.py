@@ -70,7 +70,7 @@ try:
 
     # Define IPolicyConfig interface for setting default audio device
     # This is not exposed by pycaw, so we define it ourselves
-    from comtypes import COMMETHOD, HRESULT, WSTRING
+    from comtypes import COMMETHOD, HRESULT
 
     class IPolicyConfig(comtypes.IUnknown):
         _iid_ = GUID('{f8679f50-850a-41cf-9c72-430f290290c8}')
@@ -87,7 +87,7 @@ try:
             COMMETHOD([], HRESULT, 'GetPropertyValue'),
             COMMETHOD([], HRESULT, 'SetPropertyValue'),
             COMMETHOD([], HRESULT, 'SetDefaultEndpoint',
-                     (['in'], WSTRING, 'pszDeviceId'),
+                     (['in'], comtypes.c_wchar_p, 'pszDeviceId'),
                      (['in'], comtypes.c_int, 'role')),
         ]
 
