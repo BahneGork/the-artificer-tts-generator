@@ -373,10 +373,11 @@ class AudioDeviceManager:
                 # Get friendly name
                 from comtypes import cast, POINTER
                 from pycaw.pycaw import IPropertyStore
+                from ctypes import byref
                 store = cast(endpoint.OpenPropertyStore(0), POINTER(IPropertyStore))
 
                 # Get device friendly name using PropertyKey
-                name = store.GetValue(PKEY_Device_FriendlyName).GetValue()
+                name = store.GetValue(byref(PKEY_Device_FriendlyName)).GetValue()
 
                 devices.append({
                     'id': device_id,
@@ -406,9 +407,10 @@ class AudioDeviceManager:
             # Get friendly name
             from comtypes import cast, POINTER
             from pycaw.pycaw import IPropertyStore
+            from ctypes import byref
             store = cast(default_device.OpenPropertyStore(0), POINTER(IPropertyStore))
             # Get device friendly name using PropertyKey
-            name = store.GetValue(PKEY_Device_FriendlyName).GetValue()
+            name = store.GetValue(byref(PKEY_Device_FriendlyName)).GetValue()
 
             return {
                 'id': device_id,
