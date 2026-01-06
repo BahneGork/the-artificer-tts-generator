@@ -2077,42 +2077,33 @@ Voice models are NOT distributed with this application.
             # Give audio system time to stabilize after device switch
             time.sleep(1.0)
 
-            # Use pygame for more reliable playback after device switch
-            if PYGAME_AVAILABLE:
-                # Initialize pygame mixer
+            # Use winsound for reliable Windows playback (built-in, no dependencies)
+            import winsound
+
+            # Play audio using Windows API (this is synchronous)
+            # We'll use SND_ASYNC flag to play async so we can check for cancellation
+            import threading
+            playback_complete = threading.Event()
+
+            def play_audio():
                 try:
-                    pygame.mixer.quit()  # Reset if already initialized
-                except:
-                    pass
-                pygame.mixer.init(frequency=44100, size=-16, channels=2, buffer=512)
+                    winsound.PlaySound(temp_discord_path, winsound.SND_FILENAME)
+                except Exception as e:
+                    print(f"Winsound playback error: {e}")
+                finally:
+                    playback_complete.set()
 
-                # Load and play
-                pygame.mixer.music.load(temp_discord_path)
-                pygame.mixer.music.play()
+            # Start playback in separate thread
+            playback_thread = threading.Thread(target=play_audio, daemon=True)
+            playback_thread.start()
 
-                # Wait for playback to finish (checking for cancellation)
-                while pygame.mixer.music.get_busy():
-                    if not self.is_sending_to_discord:
-                        pygame.mixer.music.stop()
-                        break
-                    pygame.display.get_surface() if pygame.display.get_surface() else None
-                    time.sleep(0.1)
-            else:
-                # Fallback to pydub playback
-                audio_to_play = AudioSegment.from_file(temp_discord_path)
-
-                # Play in chunks so we can check for cancellation
-                chunk_size = 100  # milliseconds
-                for i in range(0, len(audio_to_play), chunk_size):
-                    if not self.is_sending_to_discord:
-                        # Cancelled
-                        break
-
-                    chunk = audio_to_play[i:i+chunk_size]
-
-                    # Use pydub's playback
-                    from pydub.playback import play
-                    play(chunk)
+            # Wait for playback to finish or cancellation
+            while not playback_complete.is_set():
+                if not self.is_sending_to_discord:
+                    # Cancelled - stop playback
+                    winsound.PlaySound(None, winsound.SND_PURGE)
+                    break
+                time.sleep(0.1)
 
             # Restore microphone
             time.sleep(0.3)  # Brief pause before switching back
