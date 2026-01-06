@@ -478,14 +478,16 @@ class AudioDeviceManager:
 
         try:
             # Initialize COM for this thread
-            from comtypes import CoInitialize, CoUninitialize, CoCreateInstance
+            from comtypes import CoInitialize, CoUninitialize, CoCreateInstance, GUID
             from ctypes import create_unicode_buffer
             CoInitialize()
 
             # Use the IPolicyConfig interface we defined at the top of the file
             # to set the default audio device
+            # Convert CLSID string to GUID object
+            clsid = GUID('{870af99c-171d-4f9e-af0d-e63df40c2bc9}')  # CLSID_CPolicyConfigClient
             policy_config = CoCreateInstance(
-                '{870af99c-171d-4f9e-af0d-e63df40c2bc9}',  # CLSID_CPolicyConfigClient
+                clsid,
                 IPolicyConfig,
                 CLSCTX_ALL
             )
