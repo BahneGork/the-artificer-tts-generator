@@ -368,28 +368,24 @@ class AudioDeviceManager:
             all_devices = AudioUtilities.GetAllDevices()
 
             for device in all_devices:
-                # Only include input (capture) devices
-                # Check if this is a recording device by trying to get the endpoint
-                try:
-                    device_enumerator = AudioUtilities.GetDeviceEnumerator()
-                    endpoint = device_enumerator.GetDevice(device.id)
+                # Filter by device ID prefix:
+                # {0.0.0.00000000}.{guid} = render/output device
+                # {0.0.1.00000000}.{guid} = capture/input device
+                if device.id.startswith('{0.0.1.'):
+                    # Get the endpoint for this device
+                    try:
+                        device_enumerator = AudioUtilities.GetDeviceEnumerator()
+                        endpoint = device_enumerator.GetDevice(device.id)
 
-                    # Check if it's a capture device
-                    from pycaw.constants import EDataFlow
-                    endpoint_desc = endpoint.GetDataFlow()
-
-                    # Only include capture devices (not render/output devices)
-                    if endpoint_desc == EDataFlow.eCapture.value:
                         devices.append({
                             'id': device.id,
-                            'name': device.FriendlyName,  # This should have the friendly name!
+                            'name': device.FriendlyName,
                             'endpoint': endpoint
                         })
                         print(f"DEBUG: Found capture device: {device.FriendlyName}")
-                except Exception as ex:
-                    # Skip devices we can't access
-                    print(f"DEBUG: Skipping device {device.id}: {ex}")
-                    continue
+                    except Exception as ex:
+                        print(f"DEBUG: Could not get endpoint for {device.id}: {ex}")
+                        continue
 
             return devices
         except Exception as e:
