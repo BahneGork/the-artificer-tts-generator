@@ -52,6 +52,7 @@ hiddenimports = [
     'audioop_lts',  # Required for Python 3.13+
     'pycaw',  # Windows audio control for Discord integration
     'pycaw.pycaw',
+    'pycaw.constants',
     'comtypes',  # Required by pycaw
 ]
 
