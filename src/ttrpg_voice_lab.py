@@ -481,7 +481,7 @@ class AudioDeviceManager:
             return None
 
     def set_default_device(self, device_id):
-        """Set a device as the default recording device"""
+        """Set a device as the default recording/playback device"""
         if not self.pycaw_available:
             return False
 
@@ -491,27 +491,32 @@ class AudioDeviceManager:
             from ctypes import create_unicode_buffer
             CoInitialize()
 
-            # Use the IPolicyConfig interface we defined at the top of the file
-            # to set the default audio device
-            # Convert CLSID string to GUID object
-            clsid = GUID('{870af99c-171d-4f9e-af0d-e63df40c2bc9}')  # CLSID_CPolicyConfigClient
-            policy_config = CoCreateInstance(
-                clsid,
-                IPolicyConfig,
-                CLSCTX_ALL
-            )
+            try:
+                # Use the IPolicyConfig interface we defined at the top of the file
+                # to set the default audio device
+                # Convert CLSID string to GUID object
+                clsid = GUID('{870af99c-171d-4f9e-af0d-e63df40c2bc9}')  # CLSID_CPolicyConfigClient
+                policy_config = CoCreateInstance(
+                    clsid,
+                    IPolicyConfig,
+                    CLSCTX_ALL
+                )
 
-            # Convert device_id string to a unicode buffer that ctypes can work with
-            device_id_buffer = create_unicode_buffer(device_id)
+                # Convert device_id string to a unicode buffer that ctypes can work with
+                device_id_buffer = create_unicode_buffer(device_id)
 
-            # Set as default for all roles
-            policy_config.SetDefaultEndpoint(device_id_buffer, ERole.eConsole.value)
-            policy_config.SetDefaultEndpoint(device_id_buffer, ERole.eMultimedia.value)
-            policy_config.SetDefaultEndpoint(device_id_buffer, ERole.eCommunications.value)
+                # Set as default for all roles (works for both input and output devices)
+                policy_config.SetDefaultEndpoint(device_id_buffer, ERole.eConsole.value)
+                policy_config.SetDefaultEndpoint(device_id_buffer, ERole.eMultimedia.value)
+                policy_config.SetDefaultEndpoint(device_id_buffer, ERole.eCommunications.value)
 
-            return True
+                return True
+            finally:
+                # Always cleanup COM
+                CoUninitialize()
+
         except Exception as e:
-            print(f"Error setting default device: {e}")
+            print(f"Error setting default device {device_id}: {e}")
             import traceback
             traceback.print_exc()
             return False
@@ -635,61 +640,156 @@ class AudioDeviceManager:
         print(f"DEBUG: Switching OUTPUT to {cable_input['name']}")
         success1 = self.set_default_device(cable_input['id'])
 
+        if not success1:
+            print(f"ERROR: Failed to switch OUTPUT to {cable_input['name']}")
+            return False, "Failed to switch output device to virtual cable"
+
+        # Wait for Windows to process the change
+        import time
+        time.sleep(0.5)
+
         # Switch INPUT to CABLE Output (so Discord hears it)
         print(f"DEBUG: Switching INPUT to {cable_output['name']}")
         success2 = self.set_default_device(cable_output['id'])
 
-        if success1 and success2:
-            self.is_discord_mode = True
-            return True, f"Audio routing through virtual cable"
-        else:
-            return False, "Failed to switch audio devices"
+        if not success2:
+            print(f"ERROR: Failed to switch INPUT to {cable_output['name']}")
+            # Try to restore output device since we're failing
+            self.set_default_device(self.original_output_device_id)
+            return False, "Failed to switch input device to virtual cable"
+
+        print(f"SUCCESS: Audio routing through virtual cable")
+        self.is_discord_mode = True
+        return True, f"Audio routing through virtual cable"
 
     def restore_original_device(self):
         """Restore original OUTPUT (speakers) and INPUT (microphone) devices"""
         if not self.original_output_device_id or not self.original_input_device_id:
             return False, "No original devices to restore"
 
-        # Restore OUTPUT device (speakers)
-        print(f"DEBUG: Restoring OUTPUT to {self.original_output_device_name}")
+        import time
+        errors = []
+
+        # Restore OUTPUT device (speakers) first
+        print(f"DEBUG: Restoring OUTPUT to {self.original_output_device_name} ({self.original_output_device_id})")
         success1 = self.set_default_device(self.original_output_device_id)
 
+        if not success1:
+            errors.append(f"Failed to restore speakers ({self.original_output_device_name})")
+            print(f"ERROR: {errors[-1]}")
+        else:
+            print(f"SUCCESS: Restored speakers to {self.original_output_device_name}")
+
+        # Wait for Windows to process the change
+        time.sleep(0.5)
+
         # Restore INPUT device (microphone)
-        print(f"DEBUG: Restoring INPUT to {self.original_input_device_name}")
+        print(f"DEBUG: Restoring INPUT to {self.original_input_device_name} ({self.original_input_device_id})")
         success2 = self.set_default_device(self.original_input_device_id)
 
-        if success1 and success2:
-            output_name = self.original_output_device_name
-            input_name = self.original_input_device_name
-            self.original_output_device_id = None
-            self.original_output_device_name = None
-            self.original_input_device_id = None
-            self.original_input_device_name = None
-            self.is_discord_mode = False
-            return True, f"Restored speakers and microphone"
+        if not success2:
+            errors.append(f"Failed to restore microphone ({self.original_input_device_name})")
+            print(f"ERROR: {errors[-1]}")
         else:
-            return False, "Failed to restore audio devices"
+            print(f"SUCCESS: Restored microphone to {self.original_input_device_name}")
+
+        # Clear stored devices regardless of success (prevent repeated failures)
+        output_name = self.original_output_device_name
+        input_name = self.original_input_device_name
+        self.original_output_device_id = None
+        self.original_output_device_name = None
+        self.original_input_device_id = None
+        self.original_input_device_name = None
+        self.is_discord_mode = False
+
+        if success1 and success2:
+            return True, f"Restored speakers and microphone"
+        elif success1 or success2:
+            # Partial success
+            return False, f"Partial restore: {'; '.join(errors)}"
+        else:
+            return False, f"Failed to restore: {'; '.join(errors)}"
 
     def emergency_reset(self):
-        """Emergency reset - find first real microphone and use it"""
-        devices = self.get_all_recording_devices()
+        """Emergency reset - find and restore real audio devices (both input and output)"""
+        import time
 
-        # Filter out virtual cables
-        real_mics = [d for d in devices if not any(
+        # Get all INPUT devices (microphones)
+        input_devices = self.get_all_recording_devices()
+
+        # Filter out virtual cables from input devices
+        real_mics = [d for d in input_devices if not any(
             keyword in d['name'].lower()
             for keyword in ['cable', 'voicemeeter', 'virtual', 'vac']
         )]
 
-        if not real_mics:
-            return False, "No real microphone found"
+        # Get all OUTPUT devices (speakers)
+        try:
+            from comtypes import CoInitialize
+            CoInitialize()
 
-        # Use first real mic
-        success = self.set_default_device(real_mics[0]['id'])
-        if success:
-            self.original_device_id = None
-            self.original_device_name = None
-            self.is_discord_mode = False
-            return True, f"Reset to '{real_mics[0]['name']}'"
+            from pycaw.pycaw import AudioUtilities
+            all_devices = AudioUtilities.GetAllDevices()
+
+            output_devices = []
+            for device in all_devices:
+                if device.id.startswith('{0.0.0.'):  # Output device
+                    state_str = str(device.state)
+                    if 'Active' in state_str:
+                        output_devices.append({
+                            'id': device.id,
+                            'name': device.FriendlyName
+                        })
+
+            # Filter out virtual cables from output devices
+            real_speakers = [d for d in output_devices if not any(
+                keyword in d['name'].lower()
+                for keyword in ['cable', 'voicemeeter', 'virtual', 'vac']
+            )]
+
+        except Exception as e:
+            print(f"Error getting output devices: {e}")
+            real_speakers = []
+
+        if not real_mics and not real_speakers:
+            return False, "No real audio devices found"
+
+        success_count = 0
+        messages = []
+
+        # Reset OUTPUT device (speakers) first
+        if real_speakers:
+            print(f"DEBUG: Emergency reset OUTPUT to {real_speakers[0]['name']}")
+            if self.set_default_device(real_speakers[0]['id']):
+                success_count += 1
+                messages.append(f"Speakers: {real_speakers[0]['name']}")
+                print(f"SUCCESS: Reset speakers to {real_speakers[0]['name']}")
+            else:
+                print(f"ERROR: Failed to reset speakers")
+                messages.append("Speakers: Failed")
+
+            time.sleep(0.5)
+
+        # Reset INPUT device (microphone)
+        if real_mics:
+            print(f"DEBUG: Emergency reset INPUT to {real_mics[0]['name']}")
+            if self.set_default_device(real_mics[0]['id']):
+                success_count += 1
+                messages.append(f"Mic: {real_mics[0]['name']}")
+                print(f"SUCCESS: Reset microphone to {real_mics[0]['name']}")
+            else:
+                print(f"ERROR: Failed to reset microphone")
+                messages.append("Mic: Failed")
+
+        # Clear stored device info
+        self.original_output_device_id = None
+        self.original_output_device_name = None
+        self.original_input_device_id = None
+        self.original_input_device_name = None
+        self.is_discord_mode = False
+
+        if success_count > 0:
+            return True, f"Reset: {' | '.join(messages)}"
         else:
             return False, "Emergency reset failed"
 
