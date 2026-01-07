@@ -2195,43 +2195,10 @@ Voice models are NOT distributed with this application.
                     break
                 time.sleep(0.1)
 
-            # Now restore OUTPUT to speakers and play again so user can hear it
-            if self.is_sending_to_discord:  # Only if not cancelled
-                self.status_label.configure(text="Playing to speakers...")
-
-                # Restore OUTPUT device to speakers (keep INPUT as CABLE Output for now)
-                if self.audio_device_manager.original_output_device_id:
-                    self.audio_device_manager.set_default_device(
-                        self.audio_device_manager.original_output_device_id
-                    )
-                    time.sleep(0.3)  # Let device switch settle
-
-                # Play to speakers (user hears this)
-                playback_complete.clear()
-                playback_thread2 = threading.Thread(target=play_audio, daemon=True)
-                playback_thread2.start()
-
-                # Wait for second playback
-                while not playback_complete.is_set():
-                    if not self.is_sending_to_discord:
-                        winsound.PlaySound(None, winsound.SND_PURGE)
-                        break
-                    time.sleep(0.1)
-
-            # Restore INPUT device (microphone)
-            time.sleep(0.3)
-            self.status_label.configure(text="Restoring microphone...")
-            if self.audio_device_manager.original_input_device_id:
-                success = self.audio_device_manager.set_default_device(
-                    self.audio_device_manager.original_input_device_id
-                )
-                if success:
-                    message = "Audio devices restored"
-                else:
-                    message = "Could not restore microphone"
-            else:
-                success = False
-                message = "No devices to restore"
+            # Restore original audio devices
+            time.sleep(0.3)  # Brief pause before switching back
+            self.status_label.configure(text="Restoring audio devices...")
+            success, message = self.audio_device_manager.restore_original_device()
 
             if success:
                 self.discord_status_label.configure(text=f"✓ {message}", text_color="#43B581")
