@@ -387,6 +387,16 @@
                     <li>Close and restart The Artificer if needed</li>
                 </ol>
 
+                <h3>Problem: Running Apps Don't Have Sound After Restore</h3>
+                <p><strong>Solution:</strong></p>
+                <ol>
+                    <li>This is normal Windows behavior - some apps don't auto-detect device changes</li>
+                    <li>Close and reopen the affected application (e.g., music player, browser, game)</li>
+                    <li>The app will then use the restored default audio device</li>
+                    <li>Alternative: Manually change the app's audio output in its settings</li>
+                </ol>
+                <p><strong>Why this happens:</strong> When you start an app, it opens the current default audio device. If you change the default device while the app is running, some apps continue using the old device until restarted.</p>
+
                 <h3>Problem: Audio Quality Issues</h3>
                 <p><strong>Solution:</strong></p>
                 <ol>
