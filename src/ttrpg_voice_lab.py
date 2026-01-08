@@ -369,6 +369,47 @@ VOICE_CATALOG = [
         "quality": "medium",
         "size_mb": 51,
         "sample_url": "https://rhasspy.github.io/piper-samples/samples/da/da_DK/talesyntese/medium/speaker_0.mp3"
+    },
+    # Icelandic voices (closest living language to Old Norse)
+    {
+        "id": "is_IS-bui-medium",
+        "name": "Icelandic - Male (Bui)",
+        "description": "Icelandic male voice. Perfect for: Old Norse characters, Vikings, Nordic mystics, Rune readers",
+        "language": "is/is_IS",
+        "voice": "bui",
+        "quality": "medium",
+        "size_mb": 51,
+        "sample_url": "https://rhasspy.github.io/piper-samples/samples/is/is_IS/bui/medium/speaker_0.mp3"
+    },
+    {
+        "id": "is_IS-steinn-medium",
+        "name": "Icelandic - Male (Steinn)",
+        "description": "Icelandic male voice. Perfect for: Old Norse warriors, Jarls, Viking chieftains, Norse gods",
+        "language": "is/is_IS",
+        "voice": "steinn",
+        "quality": "medium",
+        "size_mb": 51,
+        "sample_url": "https://rhasspy.github.io/piper-samples/samples/is/is_IS/steinn/medium/speaker_0.mp3"
+    },
+    {
+        "id": "is_IS-salka-medium",
+        "name": "Icelandic - Female (Salka)",
+        "description": "Icelandic female voice. Perfect for: Norse priestesses, Shield maidens, Völva seers, Nordic NPCs",
+        "language": "is/is_IS",
+        "voice": "salka",
+        "quality": "medium",
+        "size_mb": 51,
+        "sample_url": "https://rhasspy.github.io/piper-samples/samples/is/is_IS/salka/medium/speaker_0.mp3"
+    },
+    {
+        "id": "is_IS-ugla-medium",
+        "name": "Icelandic - Female (Ugla)",
+        "description": "Icelandic female voice. Perfect for: Norse witches, Valkyries, Skalds, Old Norse storytellers",
+        "language": "is/is_IS",
+        "voice": "ugla",
+        "quality": "medium",
+        "size_mb": 51,
+        "sample_url": "https://rhasspy.github.io/piper-samples/samples/is/is_IS/ugla/medium/speaker_0.mp3"
     }
 ]
 
